@@ -1,0 +1,32 @@
+# =============================================================================
+# Prometheus Configuration
+#
+# This tells Prometheus where to collect metrics from and how often.
+# vLLM exposes metrics at /metrics in Prometheus format automatically.
+# =============================================================================
+
+global:
+  # How often Prometheus scrapes targets (pulls metrics)
+  scrape_interval: 5s
+  # How often rules are evaluated (not used here, but good default)
+  evaluation_interval: 5s
+
+scrape_configs:
+  # ---------------------------------------------------------------------------
+  # vLLM Metrics
+  # vLLM automatically exposes Prometheus metrics at /metrics including:
+  #   - vllm:request_duration_seconds    (request latency histogram)
+  #   - vllm:num_requests_running        (current in-flight requests)
+  #   - vllm:num_requests_waiting        (requests queued)
+  #   - vllm:gpu_cache_usage_perc        (KV cache utilization)
+  #   - vllm:generation_tokens_total     (total tokens generated)
+  #   - vllm:prompt_tokens_total         (total prompt tokens processed)
+  #   - vllm:time_to_first_token_seconds (TTFT histogram)
+  # ---------------------------------------------------------------------------
+  - job_name: 'vllm'
+    # "vllm" is the service name in docker-compose.
+    # Docker Compose networking resolves this to the vLLM container's IP.
+    static_configs:
+      - targets: ['vllm:8000']
+    # Scrape the /metrics endpoint (this is the default path, explicit for clarity)
+    metrics_path: '/metrics'

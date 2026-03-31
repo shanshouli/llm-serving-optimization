@@ -1,0 +1,19 @@
+# =============================================================================
+# Grafana Dashboard Provisioning
+#
+# This tells Grafana to auto-load dashboard JSON files from a directory.
+# Any .json file in /var/lib/grafana/dashboards/ becomes a dashboard.
+# =============================================================================
+
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      # This path inside the container maps to ./monitoring/grafana/dashboards/ on host
+      path: /var/lib/grafana/dashboards

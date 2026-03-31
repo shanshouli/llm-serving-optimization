@@ -1,0 +1,17 @@
+# =============================================================================
+# Grafana Datasource Provisioning
+#
+# This file auto-configures Prometheus as a data source when Grafana starts.
+# No manual setup needed - just open http://localhost:3000 and the dashboard works.
+# =============================================================================
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    # "prometheus" resolves to the Prometheus container via Docker Compose networking
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true

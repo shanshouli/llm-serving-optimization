@@ -1,0 +1,107 @@
+# =============================================================================
+# Docker Compose: LLM Inference Benchmark Stack
+#
+# This file manages 3 services:
+#   1. vllm-server:  The LLM inference server (GPU required)
+#   2. prometheus:   Metrics collector - scrapes vLLM /metrics every 5 seconds
+#   3. grafana:      Dashboard UI - visualizes metrics at http://localhost:3000
+#
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose down           # Stop all services
+#   docker compose logs -f vllm   # Follow vLLM logs
+#   docker compose up -d grafana prometheus  # Start only monitoring (if vLLM is already running)
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # vLLM Inference Server
+  # Serves Llama-3.2-3B-Instruct on port 8000 with OpenAI-compatible API
+  # ---------------------------------------------------------------------------
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-server
+    ports:
+      - "8000:8000"
+    volumes:
+      # Cache HuggingFace models on host so they persist across container restarts
+      - huggingface-cache:/root/.cache/huggingface
+      # Mount project directory for adapter files and configs
+      - .:/workspace
+    env_file:
+      - .env    # Contains HUGGING_FACE_HUB_TOKEN
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # vLLM startup arguments optimized for RTX 2080 (8GB, ~6.9GB usable)
+    command: >
+      --model meta-llama/Llama-3.2-3B-Instruct
+      --dtype float16
+      --max-model-len 1024
+      --gpu-memory-utilization 0.85
+      --enforce-eager
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Prometheus - Metrics Collector
+  # Scrapes vLLM's /metrics endpoint every 5 seconds and stores time-series data
+  # Access at http://localhost:9090
+  # ---------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # Prometheus config file that defines scrape targets
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      # Persistent storage for metrics data
+      - prometheus-data:/prometheus
+    # Keep 15 days of metrics data
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+    restart: unless-stopped
+    depends_on:
+      - vllm
+
+  # ---------------------------------------------------------------------------
+  # Grafana - Dashboard & Visualization
+  # Pre-configured with Prometheus datasource and vLLM dashboard
+  # Access at http://localhost:3000 (login: admin / admin)
+  # ---------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      # Auto-provision the Prometheus datasource on first startup
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      # Auto-provision the dashboard config
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      # Pre-built dashboard JSON files
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      # Persistent storage for Grafana settings
+      - grafana-data:/var/lib/grafana
+    environment:
+      # Allow anonymous access for easier demo/presentation use
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      # Default admin credentials
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+# Named volumes persist data across container restarts
+volumes:
+  huggingface-cache:
+  prometheus-data:
+  grafana-data:
