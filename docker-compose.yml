@@ -25,8 +25,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Cache HuggingFace models on host so they persist across container restarts
-      - huggingface-cache:/root/.cache/huggingface
+      # Bind-mount the host HuggingFace cache so models are shared with standalone docker run
+      # This reuses models already downloaded to C:\Users\zla77\.cache\huggingface
+      - ${USERPROFILE}/.cache/huggingface:/root/.cache/huggingface
       # Mount project directory for adapter files and configs
       - .:/workspace
     env_file:
@@ -46,6 +47,39 @@ services:
       --gpu-memory-utilization 0.85
       --enforce-eager
     restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # HuggingFace Transformers Baseline Server
+  # Plain HF generate() with no PagedAttention or continuous batching.
+  # Used as the "naive" baseline to compare against vLLM.
+  # Port 8001 (intentionally different from vLLM's 8000).
+  #
+  # First-time setup: docker compose build baseline
+  # ---------------------------------------------------------------------------
+  baseline:
+    build:
+      context: .
+      dockerfile: serving/Dockerfile
+    container_name: hf-baseline
+    ports:
+      - "8001:8001"
+    volumes:
+      # Reuse the same HuggingFace model cache as the standalone docker run
+      - ${USERPROFILE}/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env    # Contains HUGGING_FACE_HUB_TOKEN
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    # baseline does NOT depend on vLLM — they are never run at the same time
+    # (RTX 2080 only has enough VRAM for one model)
+    profiles:
+      - baseline   # only starts when: docker compose --profile baseline up
 
   # ---------------------------------------------------------------------------
   # Prometheus - Metrics Collector
@@ -102,6 +136,5 @@ services:
 
 # Named volumes persist data across container restarts
 volumes:
-  huggingface-cache:
   prometheus-data:
   grafana-data:
