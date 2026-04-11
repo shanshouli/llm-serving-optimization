@@ -1,164 +1,218 @@
 """
-LLM Inference Benchmark Client
+LLM Inference Benchmark Client (ShareGPT workload)
 
-This script sends a fixed number of identical prompts to an LLM serving endpoint
-and measures performance metrics: latency, tokens/sec, and throughput.
+Sends requests from a ShareGPT dataset to an LLM serving endpoint and measures
+performance: latency percentiles, tokens/sec, and aggregate throughput.
 
 Usage:
-    uv run python benchmark/client.py [num_requests] [concurrency]
+    # Prepare dataset first (run once):
+    uv run python benchmark/prepare_sharegpt.py
 
-Examples:
-    uv run python benchmark/client.py 50 1     # 50 requests, 1 at a time (sequential)
-    uv run python benchmark/client.py 100 8    # 100 requests, 8 at a time (concurrent)
+    # Then run benchmarks:
+    uv run python benchmark/client.py --concurrency 1  --requests 100  # FP16
+    uv run python benchmark/client.py --concurrency 8  --requests 100  # FP16
+    uv run python benchmark/client.py --concurrency 1  --requests 100 --max-len 2048  # INT8
+    uv run python benchmark/client.py --concurrency 8  --requests 100 --max-len 4096  # INT4
+
+    # Against SageMaker (Member B):
+    uv run python benchmark/client.py --url https://<endpoint>.sagemaker.amazonaws.com/...
+                                       --concurrency 8 --requests 100 --max-len 4096
 """
 
 import aiohttp
 import asyncio
 import time
 import csv
-import sys
 import os
+import json
+import random
 import argparse
+
+
+# =============================================================================
+# Dataset loading
+# =============================================================================
+
+def load_sharegpt(dataset_path: str, max_len: int, n: int, seed: int = 42) -> list[dict]:
+    """
+    Load ShareGPT samples from the preprocessed JSON file and filter by sequence length.
+
+    Args:
+        dataset_path: Path to sharegpt_filtered.json (created by prepare_sharegpt.py).
+        max_len:      Maximum total tokens (input + output). Use 1024 for FP16,
+                      2048 for INT8, 4096 for INT4.
+        n:            Number of samples to return.
+        seed:         Random seed for reproducibility.
+
+    Returns:
+        List of dicts with keys: prompt, input_tokens, output_tokens.
+
+    Raises:
+        FileNotFoundError: If dataset_path does not exist.
+        ValueError:        If not enough samples pass the max_len filter.
+    """
+    if not os.path.exists(dataset_path):
+        raise FileNotFoundError(
+            f"Dataset not found: {dataset_path}\n"
+            "Run 'uv run python benchmark/prepare_sharegpt.py' first."
+        )
+
+    with open(dataset_path, "r") as f:
+        all_samples = json.load(f)
+
+    # Filter: only keep samples whose estimated total length fits in the model's context
+    filtered = [
+        s for s in all_samples
+        if s["input_tokens"] + s["output_tokens"] <= max_len
+    ]
+
+    if len(filtered) < n:
+        raise ValueError(
+            f"Only {len(filtered)} samples pass max_len={max_len} filter, "
+            f"but {n} were requested. Reduce --requests or increase --max-len."
+        )
+
+    # Shuffle with a fixed seed so every run uses the same sample order.
+    # This ensures FP16/INT8/INT4 results are comparable.
+    rng = random.Random(seed)
+    rng.shuffle(filtered)
+
+    return filtered[:n]
 
 
 # =============================================================================
 # Core benchmark logic
 # =============================================================================
 
-async def single_request(session, semaphore, api_url, payload):
+async def single_request(
+    session: aiohttp.ClientSession,
+    semaphore: asyncio.Semaphore,
+    api_url: str,
+    model: str,
+    sample: dict,
+) -> dict:
     """
-    Send one request to the LLM endpoint and measure how long it takes.
+    Send one request to the LLM endpoint and measure latency.
 
     Args:
-        session:   The shared HTTP connection pool (reused across requests).
-        semaphore: Controls how many requests can run at the same time.
-                   e.g., Semaphore(4) means at most 4 requests in flight.
-        api_url:   The full URL of the completions endpoint.
-        payload:   The JSON request body.
+        session:   Shared HTTP connection pool.
+        semaphore: Limits how many requests run simultaneously.
+        api_url:   Full URL of the /v1/completions endpoint.
+        model:     Model name string expected by the server.
+        sample:    One ShareGPT sample (prompt + token length metadata).
 
     Returns:
-        A dict with:
-          - latency: how many seconds this request took (end-to-end)
-          - tokens:  how many tokens the model generated
-          - tps:     tokens per second for this single request
+        Dict with: latency (s), tokens (int), tps (float/s).
     """
-    # Wait here if we've hit the concurrency limit.
-    # This is what controls "1 at a time" vs "8 at a time".
+    # max_tokens: use the ShareGPT reference output length, capped at 512.
+    # This matches how vLLM's own benchmark_serving.py works — we tell the server
+    # to generate the same amount of tokens as the original response, so comparisons
+    # across quantization levels are apples-to-apples.
+    max_tokens = min(sample["output_tokens"], 512)
+
+    payload = {
+        "model": model,
+        "prompt": sample["prompt"],
+        "max_tokens": max_tokens,
+    }
+
     async with semaphore:
         start = time.perf_counter()
 
-        # Send the POST request to the serving endpoint
         async with session.post(api_url, json=payload) as resp:
+            if resp.status != 200:
+                text = await resp.text()
+                raise RuntimeError(f"HTTP {resp.status}: {text[:200]}")
             result = await resp.json()
 
         latency = time.perf_counter() - start
 
-        # Extract the number of tokens generated from the response
-        tokens = result["usage"]["completion_tokens"]
-
-        return {
-            "latency": latency,
-            "tokens": tokens,
-            "tps": tokens / latency,  # tokens per second
-        }
-
-
-async def run_benchmark(n=50, concurrency=1, api_url="http://localhost:8000/v1/completions",
-                        model="meta-llama/Llama-3.2-3B-Instruct", output=None):
-    """
-    Run the full benchmark: send n requests with a given concurrency level,
-    then print summary statistics and save raw data to CSV.
-
-    Args:
-        n:           Total number of requests to send.
-        concurrency: How many requests to send at the same time.
-                     1 = sequential (one after another)
-                     8 = 8 requests in flight simultaneously
-        api_url:     The completions endpoint URL.
-        model:       Model name sent in the request payload.
-        output:      CSV output path. Auto-generated if None.
-    """
-    # Every request uses the same prompt and token budget for a fair comparison.
-    payload = {
-        "model": model,
-        "prompt": "Explain the concept of cloud computing in detail.",
-        "max_tokens": 256,
+    tokens = result["usage"]["completion_tokens"]
+    return {
+        "latency": latency,
+        "tokens": tokens,
+        "tps": tokens / latency,
     }
 
-    # Semaphore limits how many requests run in parallel.
-    # Think of it as "number of checkout lanes open at a store".
+
+async def run_benchmark(
+    n: int = 100,
+    concurrency: int = 1,
+    api_url: str = "http://localhost:8000/v1/completions",
+    model: str = "meta-llama/Llama-3.2-3B-Instruct",
+    dataset_path: str = "benchmark/workloads/sharegpt_filtered.json",
+    max_len: int = 1024,
+    output: str = None,
+    seed: int = 42,
+):
+    """
+    Run the full benchmark: load ShareGPT samples, send n requests at the given
+    concurrency level, print summary statistics, and save raw data to CSV.
+
+    Args:
+        n:            Total requests to send.
+        concurrency:  Max simultaneous requests (1 = sequential).
+        api_url:      Completions endpoint URL.
+        model:        Model name in the request payload.
+        dataset_path: Path to sharegpt_filtered.json.
+        max_len:      Max total tokens for sample filtering (1024/2048/4096).
+        output:       CSV output path (auto-generated if None).
+        seed:         Random seed for dataset sampling.
+    """
+    # Load dataset — different quantization levels use different max_len filters
+    print(f"Loading {n} ShareGPT samples (max_len={max_len})...")
+    samples = load_sharegpt(dataset_path, max_len=max_len, n=n, seed=seed)
+    print(f"Loaded. Input tokens — median: "
+          f"{sorted(s['input_tokens'] for s in samples)[len(samples)//2]}")
+
+    # Semaphore gates how many requests run at once
     semaphore = asyncio.Semaphore(concurrency)
 
-    # TCPConnector reuses HTTP connections instead of opening a new one
-    # for every request. The limit should match our concurrency.
+    # Reuse TCP connections to avoid per-request connection overhead
     connector = aiohttp.TCPConnector(limit=concurrency)
 
-    async with aiohttp.ClientSession(connector=connector) as session:
-        # Create all request tasks upfront.
-        # They won't all start immediately - the semaphore gates them.
-        tasks = [single_request(session, semaphore, api_url, payload) for _ in range(n)]
+    wall_start = time.perf_counter()
 
-        # asyncio.gather runs all tasks and waits for ALL of them to finish.
-        # It returns a list of results in the same order.
+    async with aiohttp.ClientSession(connector=connector) as session:
+        tasks = [
+            single_request(session, semaphore, api_url, model, sample)
+            for sample in samples
+        ]
         results = await asyncio.gather(*tasks)
 
+    # Wall clock: actual elapsed time from first task start to last task finish.
+    # Under concurrency, this is shorter than sum(latencies) because requests overlap.
+    wall_clock = time.perf_counter() - wall_start
+
     # -------------------------------------------------------------------------
-    # Calculate summary statistics
+    # Summary statistics
     # -------------------------------------------------------------------------
 
-    # Sort latencies to compute percentiles
     latencies = sorted(r["latency"] for r in results)
     tps_list = [r["tps"] for r in results]
     total_tokens = sum(r["tokens"] for r in results)
+    n_actual = len(latencies)
 
-    # Wall clock = the longest single request time.
-    # Under concurrency, total wall clock time is roughly max(latencies),
-    # not sum(latencies), because requests overlap.
-    wall_clock = max(r["latency"] for r in results)
-
-    # -------------------------------------------------------------------------
-    # Print results
-    # -------------------------------------------------------------------------
-
-    print(f"\n{'='*50}")
-    print(f"Requests: {n} | Concurrency: {concurrency}")
-    print(f"{'='*50}")
-
-    # Average: sum of all latencies / number of requests
-    print(f"Avg latency:    {sum(latencies)/len(latencies):.3f}s")
-
-    # P50 (median): the middle value when sorted. Half the requests are faster.
-    print(f"P50 latency:    {latencies[len(latencies)//2]:.3f}s")
-
-    # P95: 95% of requests are faster than this. Shows "typical worst case".
-    print(f"P95 latency:    {latencies[int(len(latencies)*0.95)]:.3f}s")
-
-    # P99: 99% of requests are faster than this. Shows tail latency.
-    print(f"P99 latency:    {latencies[int(len(latencies)*0.99)]:.3f}s")
-
+    print(f"\n{'='*55}")
+    print(f"Requests: {n_actual} | Concurrency: {concurrency} | max_len: {max_len}")
+    print(f"{'='*55}")
+    print(f"Avg latency:    {sum(latencies)/n_actual:.3f}s")
+    print(f"P50 latency:    {latencies[n_actual//2]:.3f}s")
+    print(f"P95 latency:    {latencies[int(n_actual*0.95)]:.3f}s")
+    print(f"P99 latency:    {latencies[int(n_actual*0.99)]:.3f}s")
     print(f"Min latency:    {latencies[0]:.3f}s")
     print(f"Max latency:    {latencies[-1]:.3f}s")
-
-    # Per-request tokens/s: how fast each individual request generated tokens.
-    print(f"Avg tokens/s:   {sum(tps_list)/len(tps_list):.1f}")
-
+    print(f"Avg tokens/s:   {sum(tps_list)/n_actual:.1f}  (per request)")
     print(f"Total tokens:   {total_tokens}")
-
-    # Aggregate throughput: total tokens generated / wall clock time.
-    # This shows the system's overall capacity, not per-request speed.
-    # Under concurrency, this should be HIGHER than avg tokens/s
-    # because multiple requests are generating tokens in parallel.
-    print(f"Throughput:     {total_tokens/wall_clock:.1f} tokens/s (aggregate)")
-
-    # Requests per second: how many complete requests the system handles.
-    print(f"Requests/s:     {n/wall_clock:.2f}")
+    print(f"Throughput:     {total_tokens/wall_clock:.1f} tokens/s  (aggregate)")
+    print(f"Requests/s:     {n_actual/wall_clock:.2f}")
 
     # -------------------------------------------------------------------------
-    # Save raw data to CSV for later analysis and visualization
+    # Save raw per-request data to CSV
     # -------------------------------------------------------------------------
 
     os.makedirs("results/raw", exist_ok=True)
-    outfile = output if output else f"results/raw/bench_c{concurrency}_n{n}.csv"
+    outfile = output or f"results/raw/bench_c{concurrency}_n{n_actual}_maxlen{max_len}.csv"
     with open(outfile, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["latency", "tokens", "tps"])
         writer.writeheader()
@@ -171,17 +225,23 @@ async def run_benchmark(n=50, concurrency=1, api_url="http://localhost:8000/v1/c
 # =============================================================================
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="LLM inference benchmark client")
-    parser.add_argument("--requests",    type=int,   default=50,
-                        help="Total number of requests to send (default: 50)")
+    parser = argparse.ArgumentParser(description="LLM inference benchmark client (ShareGPT)")
+    parser.add_argument("--requests",    type=int,   default=100,
+                        help="Total requests to send (default: 100)")
     parser.add_argument("--concurrency", type=int,   default=1,
-                        help="Number of concurrent requests (default: 1)")
+                        help="Concurrent requests (default: 1)")
     parser.add_argument("--url",         type=str,   default="http://localhost:8000/v1/completions",
                         help="Completions endpoint URL")
     parser.add_argument("--model",       type=str,   default="meta-llama/Llama-3.2-3B-Instruct",
-                        help="Model name to include in the request payload")
+                        help="Model name in the request payload")
+    parser.add_argument("--dataset",     type=str,   default="benchmark/workloads/sharegpt_filtered.json",
+                        help="Path to sharegpt_filtered.json")
+    parser.add_argument("--max-len",     type=int,   default=1024,
+                        help="Max total tokens for filtering: 1024=FP16, 2048=INT8, 4096=INT4")
     parser.add_argument("--output",      type=str,   default=None,
                         help="CSV output path (auto-generated if not set)")
+    parser.add_argument("--seed",        type=int,   default=42,
+                        help="Random seed for dataset sampling (default: 42)")
     args = parser.parse_args()
 
     asyncio.run(run_benchmark(
@@ -189,5 +249,8 @@ if __name__ == "__main__":
         concurrency=args.concurrency,
         api_url=args.url,
         model=args.model,
+        dataset_path=args.dataset,
+        max_len=args.max_len,
         output=args.output,
+        seed=args.seed,
     ))
