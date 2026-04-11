@@ -10,3 +10,6 @@ wheels/
 .venv
 .DS_Store
 .env
+
+# Large generated data files (run benchmark/prepare_sharegpt.py to regenerate)
+benchmark/workloads/sharegpt_filtered.json

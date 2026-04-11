@@ -22,7 +22,7 @@ import json
 import os
 import random
 
-from datasets import load_dataset
+from huggingface_hub import hf_hub_download
 
 
 # =============================================================================
@@ -45,23 +45,38 @@ def estimate_tokens(text: str) -> int:
 # =============================================================================
 
 def main(seed: int = 42):
-    print("Downloading ShareGPT_Vicuna_unfiltered from HuggingFace...")
+    print("Downloading ShareGPT dataset from HuggingFace...")
     print("(This may take a few minutes on first run; cached afterwards.)\n")
 
-    # The dataset has multiple files; HTML_cleaned is the standard one used
-    # by vLLM and SGLang in their official benchmarks.
-    dataset = load_dataset(
-        "anon8231489123/ShareGPT_Vicuna_unfiltered",
-        data_files="HTML_cleaned_raw_dataset.json",
-        split="train",
+    # Load HF token from .env so we get authenticated rate limits.
+    # The token is optional but avoids 429 errors on slow connections.
+    hf_token = None
+    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+    if os.path.exists(env_path):
+        with open(env_path) as f:
+            for line in f:
+                if line.startswith("HUGGING_FACE_HUB_TOKEN="):
+                    hf_token = line.strip().split("=", 1)[1]
+                    break
+
+    # Use Aeala/ShareGPT_Vicuna_unfiltered — a public mirror with a stable file.
+    # The original anon8231489123 repo removed its JSON files.
+    local_path = hf_hub_download(
+        repo_id="Aeala/ShareGPT_Vicuna_unfiltered",
+        filename="ShareGPT_V4.3_unfiltered_cleaned_split.json",
+        repo_type="dataset",
+        token=hf_token,
     )
 
-    print(f"Raw dataset size: {len(dataset)} conversations")
+    with open(local_path, encoding="utf-8") as f:
+        raw = json.load(f)
+
+    print(f"Raw dataset size: {len(raw)} conversations")
 
     samples = []
     skipped = 0
 
-    for item in dataset:
+    for item in raw:
         conversations = item.get("conversations", [])
 
         # Extract the first human → gpt turn pair only.
