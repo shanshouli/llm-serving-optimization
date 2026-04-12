@@ -57,13 +57,17 @@ def load_sharegpt(dataset_path: str, max_len: int, n: int, seed: int = 42) -> li
             "Run 'uv run python benchmark/prepare_sharegpt.py' first."
         )
 
-    with open(dataset_path, "r") as f:
+    with open(dataset_path, "r", encoding="utf-8") as f:
         all_samples = json.load(f)
 
-    # Filter: only keep samples whose estimated total length fits in the model's context
+    # Filter: only keep samples whose estimated total length fits in the model's context.
+    # Apply a 0.8 safety factor because estimate_tokens() uses word_count*1.3, which
+    # underestimates actual Llama tokenizer counts by ~15-20%. Without the margin,
+    # borderline samples can exceed the model's hard context limit and return HTTP 400.
+    safe_max = int(max_len * 0.8)
     filtered = [
         s for s in all_samples
-        if s["input_tokens"] + s["output_tokens"] <= max_len
+        if s["input_tokens"] + s["output_tokens"] <= safe_max
     ]
 
     if len(filtered) < n:
@@ -103,6 +107,7 @@ async def single_request(
 
     Returns:
         Dict with: latency (s), tokens (int), tps (float/s).
+        Returns None if the server rejects the sample (HTTP 400 = prompt too long).
     """
     # max_tokens: use the ShareGPT reference output length, capped at 512.
     # This matches how vLLM's own benchmark_serving.py works — we tell the server
@@ -117,13 +122,34 @@ async def single_request(
     }
 
     async with semaphore:
+        # Track total elapsed time including any retry, so latency reflects real
+        # client-side wait time even when a connection drop forces a retry.
         start = time.perf_counter()
+        result = None
 
-        async with session.post(api_url, json=payload) as resp:
-            if resp.status != 200:
-                text = await resp.text()
-                raise RuntimeError(f"HTTP {resp.status}: {text[:200]}")
-            result = await resp.json()
+        for attempt in range(2):  # one retry on connection-level errors
+            try:
+                async with session.post(api_url, json=payload) as resp:
+                    if resp.status == 400:
+                        # Prompt exceeds actual context limit — token estimation was off
+                        # (common for non-ASCII text: Chinese/Japanese have no spaces so
+                        # word-based estimation drastically underestimates token count).
+                        # Skip this sample silently; caller will report the skip count.
+                        return None
+                    if resp.status != 200:
+                        text = await resp.text()
+                        raise RuntimeError(f"HTTP {resp.status}: {text[:200]}")
+                    result = await resp.json()
+                break  # success — exit retry loop
+            except aiohttp.ServerDisconnectedError:
+                # A peer's 400 response can cause vLLM to close the shared HTTP
+                # connection, causing other in-flight requests to see a disconnect.
+                # Retry once with a fresh connection; give up if it fails again.
+                if attempt == 1:
+                    return None
+
+        if result is None:
+            return None
 
         latency = time.perf_counter() - start
 
@@ -138,7 +164,7 @@ async def single_request(
 async def run_benchmark(
     n: int = 100,
     concurrency: int = 1,
-    api_url: str = "http://localhost:8000/v1/completions",
+    api_url: str = "http://localhost:18000/v1/completions",
     model: str = "meta-llama/Llama-3.2-3B-Instruct",
     dataset_path: str = "benchmark/workloads/sharegpt_filtered.json",
     max_len: int = 1024,
@@ -183,6 +209,12 @@ async def run_benchmark(
     # Wall clock: actual elapsed time from first task start to last task finish.
     # Under concurrency, this is shorter than sum(latencies) because requests overlap.
     wall_clock = time.perf_counter() - wall_start
+
+    # Filter out None results (samples skipped due to HTTP 400 / token estimation error)
+    skipped = sum(1 for r in results if r is None)
+    results = [r for r in results if r is not None]
+    if skipped:
+        print(f"Warning: {skipped} sample(s) skipped (prompt exceeded context limit).")
 
     # -------------------------------------------------------------------------
     # Summary statistics
@@ -230,7 +262,7 @@ if __name__ == "__main__":
                         help="Total requests to send (default: 100)")
     parser.add_argument("--concurrency", type=int,   default=1,
                         help="Concurrent requests (default: 1)")
-    parser.add_argument("--url",         type=str,   default="http://localhost:8000/v1/completions",
+    parser.add_argument("--url",         type=str,   default="http://localhost:18000/v1/completions",
                         help="Completions endpoint URL")
     parser.add_argument("--model",       type=str,   default="meta-llama/Llama-3.2-3B-Instruct",
                         help="Model name in the request payload")

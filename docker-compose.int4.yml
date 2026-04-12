@@ -1,0 +1,19 @@
+# =============================================================================
+# Docker Compose Override: INT4 AWQ
+#
+# Overrides the vllm service in docker-compose.yml to use the INT4 AWQ
+# quantized model from casperhansen.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.int4.yml up -d vllm
+#   docker compose -f docker-compose.yml -f docker-compose.int4.yml stop vllm
+# =============================================================================
+
+services:
+  vllm:
+    command: >
+      --model casperhansen/llama-3.2-3b-instruct-awq
+      --quantization awq
+      --dtype auto
+      --max-model-len 4096
+      --gpu-memory-utilization 0.85

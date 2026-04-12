@@ -33,7 +33,7 @@ import httpx
 # Configuration
 # =============================================================================
 
-VLLM_URL        = "http://localhost:8000"
+VLLM_URL        = "http://localhost:18000"
 BASELINE_URL    = "http://localhost:8001"
 MODEL_NAME      = "meta-llama/Llama-3.2-3B-Instruct"
 

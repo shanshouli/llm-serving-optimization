@@ -6,7 +6,8 @@
       "Bash(mv datasource.yml monitoring/grafana/provisioning/datasources/datasource.yml)",
       "Bash(mv dashboards.yml monitoring/grafana/provisioning/dashboards/dashboards.yml)",
       "Bash(mv vllm-dashboard.json monitoring/grafana/dashboards/vllm-dashboard.json)",
-      "Bash(rm main.py)"
+      "Bash(rm main.py)",
+      "WebSearch"
     ]
   }
 }

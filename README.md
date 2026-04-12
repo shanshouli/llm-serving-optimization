@@ -1,10 +1,14 @@
-# LLM Inference Serving Optimization and Cloud Deployment Platform
+# LLM Inference Serving Optimization and Cloud Platform Comparison
 
-Benchmarking vLLM inference serving across quantization levels (FP16/INT8/INT4) and concurrency under constrained GPU resources, then deploying the optimal configuration to AWS SageMaker for cloud validation.
+Two-part study: (1) optimize vLLM inference across quantization levels (FP16/INT8/INT4) and concurrency on a constrained consumer GPU; (2) deploy the optimal configuration to both AWS SageMaker and Google Vertex AI for a direct cloud platform comparison.
 
 ## Project Overview
 
-We study how quantization and concurrency affect LLM inference serving performance under constrained GPU resources. Using industry-standard ShareGPT workloads, we benchmark vLLM across three precision levels (FP16, INT8, INT4) and four concurrency levels (1, 4, 8, 16), with a naive HuggingFace baseline as reference. Real-time server-side metrics are captured via Prometheus + Grafana. We then deploy the optimal INT4 configuration to AWS SageMaker to evaluate cloud-specific behaviors: cold-start latency, auto-scaling, and cost-efficiency (tokens/dollar).
+This project answers two independent research questions:
+
+**Part 1 — Local optimization (Member A):** How do quantization and concurrency jointly affect LLM serving performance under constrained GPU resources (RTX 2080, 8 GB)? We benchmark vLLM across FP16/INT8/INT4 × c=1/4/8/16 using ShareGPT workloads, with a HuggingFace baseline as reference. Prometheus + Grafana provide real-time KV cache and throughput visibility.
+
+**Part 2 — Cloud platform comparison (Member B):** Given the same INT4 vLLM configuration, which cloud platform delivers better performance per dollar — AWS SageMaker (A10G, ~$1.41/hr) or Google Vertex AI (L4, ~$0.98/hr)? The L4 has ~2× the INT8 throughput of the A10G but costs 30% less, making the outcome non-obvious and practically relevant.
 
 ## Experiments
 
@@ -12,14 +16,9 @@ We study how quantization and concurrency affect LLM inference serving performan
 |---|---|---|
 | 0 | **Baseline** | Hugging Face Transformers + FastAPI, single-request serving, no optimization |
 | 1 | **Serving Framework** | Replace baseline with vLLM; measure improvements from PagedAttention and continuous batching |
-| 2 | **Quantization** | Compare FP16 → INT8 (GPTQ) → INT4 (AWQ); measure speed/memory/quality tradeoff |
-| 3 | **Concurrency** | Simulate concurrent users (1, 4, 8, 16 clients); measure throughput scaling and tail latency |
-| 4 | **Cloud Deployment** | Deploy optimal INT4 config to AWS SageMaker; measure cold-start, auto-scaling, and tokens/dollar |
-
-### Bonus (If Time Permits)
-
-- Vertex AI deployment for cross-platform cloud comparison
-- Perplexity evaluation on quantized models (WikiText-2)
+| 2 | **Quantization** | Compare FP16 → INT8 (GPTQ) → INT4 (AWQ); measure speed/memory tradeoff on RTX 2080 |
+| 3 | **Concurrency** | Simulate concurrent users (c=1/4/8/16); measure throughput scaling and tail latency |
+| 4 | **Cloud Comparison** | Deploy INT4 vLLM to SageMaker (A10G) vs Vertex AI (L4); compare latency, throughput, tokens/dollar, cold-start, auto-scaling |
 
 ## Data Matrix (Local Experiments)
 
@@ -78,10 +77,11 @@ FP16 (`--max-model-len 1024`): Filtered to input+output ≤ 1024 tokens. INT8/IN
 
 | Device | Role |
 |---|---|
-| NVIDIA RTX 2080 (8 GB) | Primary — vLLM, quantization, benchmarks |
+| NVIDIA RTX 2080 (8 GB) | Local experiments — vLLM, quantization, benchmarks |
 | Apple M2 (8 GB) | Benchmark scripting, evaluation pipeline |
 | Apple M1 (8 GB) | Visualization, result analysis, presentation |
-| AWS SageMaker (`ml.g5.xlarge`, A10G 24 GB) | Cloud deployment, auto-scaling, cost analysis |
+| AWS SageMaker `ml.g5.xlarge` (A10G 24 GB, ~$1.41/hr) | Cloud platform A — latency, throughput, auto-scaling |
+| Google Vertex AI `g2-standard-4` (L4 24 GB, ~$0.98/hr) | Cloud platform B — same metrics for direct comparison |
 
 ### Known Constraints
 
@@ -169,13 +169,24 @@ Key panels: KV Cache Utilization, Requests Running/Waiting, P50/P95/P99 Latency,
 | Cold-start latency | SageMaker deploy timing |
 | Tokens/dollar | Cost analysis |
 
-## Cloud Deployment (SageMaker)
+## Cloud Platform Comparison
 
-Uses AWS DJL-LMI container with vLLM backend on `ml.g5.xlarge` (A10G 24 GB, ~$1.41/hr).
+Both platforms deploy the same INT4 AWQ vLLM configuration using ShareGPT workloads (c=1 and c=8, n=100 requests each).
 
-See `cloud/sagemaker_deploy.py` and `cloud/sagemaker_autoscale.py`.
+| Metric | SageMaker A10G | Vertex AI L4 |
+|---|---|---|
+| GPU | A10G 24 GB (Ampere) | L4 24 GB (Ada Lovelace) |
+| On-demand price | ~$1.41/hr | ~$0.98/hr |
+| INT8 throughput | ~250 TOPS | ~485 TOPS |
+| Latency P50/P95 | TBD | TBD |
+| Tokens/s (c=8) | TBD | TBD |
+| Tokens/dollar | TBD | TBD |
+| Cold-start | TBD | TBD |
+| Scale 0→1 | TBD | TBD |
 
-**Delete endpoint immediately after experiments to stop billing.**
+See `cloud/sagemaker_deploy.py`, `cloud/sagemaker_autoscale.py`, and `cloud/vertex_deploy.py`.
+
+**Delete all endpoints immediately after experiments to stop billing.**
 
 ## Project Structure
 
@@ -221,5 +232,5 @@ CS6180-FinalProject/
 | Member | Role |
 |---|---|
 | Member A | Local Experiments Lead — all 13 GPU runs, Docker Compose, data analysis, presentation narrative |
-| Member B | Cloud Deployment Lead — SageMaker deployment, auto-scaling, cost analysis, CloudWatch monitoring |
+| Member B | Cloud Comparison Lead — SageMaker + Vertex AI deployment, auto-scaling on both platforms, tokens/dollar cost analysis |
 | Member C | Data & Presentation Lead — ShareGPT dataset prep, charts, slide design, rehearsal coordination |

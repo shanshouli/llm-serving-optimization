@@ -1,0 +1,19 @@
+# =============================================================================
+# Docker Compose Override: INT8 (W8A8 compressed-tensors)
+#
+# Overrides the vllm service in docker-compose.yml to use the INT8 quantized
+# model from neuralmagic. W8A8 = 8-bit weights + 8-bit activations.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.int8.yml up -d vllm
+#   docker compose -f docker-compose.yml -f docker-compose.int8.yml stop vllm
+# =============================================================================
+
+services:
+  vllm:
+    command: >
+      --model neuralmagic/Llama-3.2-3B-Instruct-quantized.w8a8
+      --quantization compressed-tensors
+      --dtype auto
+      --max-model-len 2048
+      --gpu-memory-utilization 0.85

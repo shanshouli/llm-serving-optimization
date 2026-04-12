@@ -6,7 +6,11 @@
 
 ## 1. Project Description
 
-We study how quantization and concurrency affect LLM inference serving performance under constrained GPU resources. Using industry-standard workloads (ShareGPT), we benchmark vLLM across three precision levels (FP16, INT8, INT4) and four concurrency levels (1, 4, 8, 16), with a naive HuggingFace baseline as reference. Real-time server-side metrics are captured via Prometheus + Grafana. We then deploy the optimal configuration to AWS SageMaker to evaluate cloud-specific behaviors: cold-start latency, auto-scaling, and cost-efficiency (tokens/dollar).
+This project addresses two distinct research questions:
+
+**Part 1 (Local):** How do quantization (FP16/INT8/INT4) and concurrency (c=1/4/8/16) jointly affect vLLM serving performance on a constrained consumer GPU? Using industry-standard ShareGPT workloads, we benchmark across 13 configurations with a HuggingFace baseline as reference. Prometheus + Grafana provide real-time KV cache and throughput visibility.
+
+**Part 2 (Cloud):** Given the same optimal INT4 vLLM configuration, which cloud platform delivers better performance per dollar — AWS SageMaker (A10G 24 GB, ~$1.41/hr) or Google Vertex AI (L4 24 GB, ~$0.98/hr)? The L4 has ~2× the INT8 compute of the A10G at 30% lower cost, making the outcome non-obvious. The "local vs cloud" framing was abandoned: comparing an RTX 2080 to an A10G proves only that better hardware is faster, which is trivial.
 
 ---
 
@@ -121,7 +125,13 @@ Note: Run with fixed prompts, not ShareGPT. Will be re-validated with ShareGPT w
 
 ### 3.1 Objective
 
-Deploy the locally-optimized vLLM INT4 configuration to AWS SageMaker. Measure cloud-specific behaviors that cannot be tested locally: cold-start, auto-scaling, and cost-efficiency.
+Deploy the locally-optimized vLLM INT4 configuration to **both** AWS SageMaker and Google Vertex AI using identical workloads and metrics. The core research question: given the same software stack, which platform delivers better tokens/dollar performance, and how do their operational characteristics (cold-start, auto-scaling speed, failure behavior) differ?
+
+**Why this comparison is non-trivial:**
+- Vertex AI L4 has ~2× the INT8 compute of SageMaker A10G, but costs 30% less
+- Both GPUs have 24 GB VRAM — hardware is roughly matched in memory capacity
+- Managed service overhead, framework versions, and scheduling differ between platforms
+- The "correct" answer depends on whether you optimize for raw throughput, tail latency, or cost
 
 ### 3.2 SageMaker Deployment (Required)
 
@@ -218,35 +228,38 @@ tokens_per_dollar = total_tokens_generated / (instance_cost_per_second × wall_c
 sagemaker.Predictor(endpoint_name).delete_endpoint()
 ```
 
-### 3.3 Vertex AI (If Time Permits)
+### 3.3 Vertex AI (Required — Part of Core Comparison)
 
-Same flow on GCP:
-1. Push container to Artifact Registry
+Same flow on GCP, using identical workload and metrics as SageMaker:
+1. Push vLLM INT4 container to Artifact Registry
 2. Deploy to Vertex AI endpoint (`g2-standard-4`, L4 24GB, ~$0.98/hr)
-3. Run same ShareGPT benchmark (c=1, c=8)
+3. Run same ShareGPT benchmark (c=1 and c=8, n=100)
 4. Configure auto-scaling (min=0, max=3)
-5. Record same metrics
+5. Record all metrics: latency P50/P95/P99, tokens/s, tokens/dollar, cold-start, scale 0→1 time
 
 ### 3.4 Expected Deliverable
 
-| Metric | Local RTX 2080 (INT4) | SageMaker A10G (INT4) | Vertex AI L4 (if done) |
+| Metric | SageMaker A10G (INT4) | Vertex AI L4 (INT4) | Notes |
 |---|---|---|---|
-| Cold-start | ~15s | ? | ? |
-| Latency c=1 | Member A's data | ? | ? |
-| Latency c=8 | Member A's data | ? | ? |
-| Throughput c=8 | Member A's data | ? | ? |
-| Scale 0→1 time | N/A | ? | ? |
-| Scale 1→2 time | N/A | ? | ? |
-| Cost | ~$0 (owned) | ~$1.41/hr | ~$0.98/hr |
-| tokens/dollar | N/A | ? | ? |
+| GPU | A10G 24 GB | L4 24 GB | L4 has ~2× INT8 TOPS |
+| Price | ~$1.41/hr | ~$0.98/hr | L4 is 30% cheaper |
+| Cold-start | ? | ? | Model load from object storage |
+| Latency P50 (c=1) | ? | ? | |
+| Latency P95 (c=8) | ? | ? | Tail latency under load |
+| Throughput (c=8) | ? | ? | tokens/s |
+| Scale 0→1 time | ? | ? | Auto-scaling responsiveness |
+| Scale 1→2 time | ? | ? | |
+| **tokens/dollar** | ? | ? | **Primary comparison metric** |
+
+Local RTX 2080 INT4 results (Member A's data) serve as the "constrained baseline" context, not as a direct comparison point.
 
 ### 3.5 Budget Estimate
 
 | Platform | Estimated GPU hours | Cost |
 |---|---|---|
-| SageMaker (`ml.g5.xlarge`) | 4-6 hours | $6-9 |
-| Vertex AI (`g2-standard-4`) | 4-6 hours (if done) | $4-6 |
-| **Total** | | **$6-15** |
+| SageMaker (`ml.g5.xlarge`, A10G) | 4-6 hours | $6-9 |
+| Vertex AI (`g2-standard-4`, L4) | 4-6 hours | $4-6 |
+| **Total** | | **$10-15** |
 
 ---
 
@@ -274,13 +287,13 @@ Same flow on GCP:
 - Data analysis and cross-experiment visualization
 - Lead presentation narrative
 
-### Member B — Cloud Deployment Lead
+### Member B — Cloud Comparison Lead
 
-- Deploy vLLM to SageMaker, run benchmark and auto-scaling test
-- Deploy to Vertex AI if time permits
-- Calculate tokens/dollar cost analysis
-- Record cold-start and scaling metrics
-- CloudWatch monitoring screenshots
+- Deploy INT4 vLLM to SageMaker (A10G), run c=1 and c=8 benchmarks, auto-scaling test
+- Deploy INT4 vLLM to Vertex AI (L4), run identical benchmarks for direct comparison
+- Calculate tokens/dollar for both platforms — primary deliverable
+- Record cold-start and scale 0→1/1→2 times on both platforms
+- CloudWatch (SageMaker) and Cloud Monitoring (Vertex AI) screenshots
 
 ### Member C — Data and Presentation Lead
 
@@ -387,6 +400,6 @@ CS6180-FinalProject/
 
 ## 10. Interview Narrative
 
-"I benchmarked vLLM inference serving across FP16, INT8, and INT4 quantization under four concurrency levels using industry-standard ShareGPT workloads on a resource-constrained 8 GB GPU. I discovered that INT4 quantization not only reduces memory but fundamentally changes system capability — re-enabling CUDA Graph, expanding KV cache from 2,496 to 16,000+ tokens, and shifting the saturation point from c=4 to c=10+. The pipeline was instrumented with Prometheus and Grafana, providing real-time visibility into KV cache utilization and queue depth that explained the root cause of every performance cliff.
+"I designed and ran a two-part LLM serving study. In Part 1, I benchmarked vLLM across FP16, INT8, and INT4 quantization under four concurrency levels on a resource-constrained 8 GB consumer GPU, using industry-standard ShareGPT workloads. I found that INT4 quantization doesn't just save memory — it fundamentally shifts the system's operating regime: re-enabling CUDA Graph, expanding KV cache from ~2,500 to 16,000+ tokens, and moving the saturation point from c=4 to beyond c=10. Prometheus and Grafana instrumentation made these dynamics visible in real time.
 
-I then deployed the optimal INT4 configuration to AWS SageMaker, measuring cold-start latency, auto-scaling behavior under burst traffic, and cost-efficiency in tokens/dollar. The result is a complete optimization pipeline from local benchmarking to cloud production validation."
+In Part 2, I avoided the trivial 'consumer GPU vs data center GPU' comparison and instead ran an apples-to-apples cloud platform comparison: the same INT4 vLLM config on AWS SageMaker (A10G, $1.41/hr) vs Google Vertex AI (L4, $0.98/hr). The L4 has roughly 2× the INT8 compute at 30% lower cost — the question was whether that hardware advantage translates to proportionally better tokens/dollar in a managed serving environment, or whether platform overhead closes the gap."

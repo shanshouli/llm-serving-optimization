@@ -2,7 +2,13 @@
 
 ## What This Project Is
 
-GenAI course final project: benchmarking and optimizing LLM inference serving across quantization levels (FP16/INT8/INT4) and concurrency under constrained GPU resources, then deploying the optimal configuration to AWS SageMaker for cloud validation. Compares serving performance (latency, throughput, cost) across local and cloud environments using ShareGPT workloads.
+GenAI course final project with two distinct research questions:
+
+**Part 1 (Local):** How do quantization (FP16/INT8/INT4) and concurrency (c=1/4/8/16) jointly affect vLLM serving performance on a constrained consumer GPU (RTX 2080, 8 GB)? Goal: find optimal configuration (expected: INT4).
+
+**Part 2 (Cloud):** Given the same INT4 vLLM configuration, which cloud platform delivers better performance per dollar — AWS SageMaker (A10G 24 GB, ~$1.41/hr) or Google Vertex AI (L4 24 GB, ~$0.98/hr)? The L4 has ~2× the INT8 compute of the A10G but costs 30% less — the outcome is non-obvious and practically useful.
+
+The "local vs cloud" framing was abandoned: comparing a consumer RTX 2080 to an A10G proves nothing beyond "better hardware is faster," which is trivial. SageMaker vs Vertex AI is a real engineering decision with non-obvious tradeoffs.
 
 This also serves as a portfolio project targeting North America AI infrastructure / LLM inference engineer roles.
 
@@ -23,9 +29,9 @@ This also serves as a portfolio project targeting North America AI infrastructur
 - FP16 ShareGPT runs (c=1/4/8/16, 100 requests each)
 - INT8 (GPTQ) model setup and runs
 - INT4 (AWQ) model setup and runs
-- SageMaker deployment (Member B)
-- Auto-scaling test and cost analysis (Member B)
-- Vertex AI (if time permits, Member B)
+- SageMaker deployment — INT4, c=1 and c=8, auto-scaling (Member B)
+- Vertex AI deployment — INT4, c=1 and c=8, auto-scaling (Member B, now required)
+- tokens/dollar cost comparison across both cloud platforms (Member B)
 - Data analysis and visualization (Member C)
 - Presentation (all)
 
@@ -73,13 +79,14 @@ Windows 11 PowerShell
 
 ## Experiment Plan
 
-| # | Experiment | Status |
-|---|---|---|
-| 0 | HF Baseline: Transformers + FastAPI, c=1 | Done (fixed prompts; redo with ShareGPT) |
-| 1 | vLLM FP16 × c=1/4/8/16 (ShareGPT, 100 req each) | TODO |
-| 2 | vLLM INT8 (GPTQ) × c=1/4/8/16 | TODO |
-| 3 | vLLM INT4 (AWQ) × c=1/4/8/16 | TODO |
-| 4 | SageMaker: INT4, c=1 and c=8, auto-scaling, cost | TODO (Member B) |
+| # | Experiment | Owner | Status |
+|---|---|---|---|
+| 0 | HF Baseline: Transformers + FastAPI, c=1 | A | Done (fixed prompts; redo with ShareGPT) |
+| 1 | vLLM FP16 × c=1/4/8/16 (ShareGPT, 100 req each) | A | TODO |
+| 2 | vLLM INT8 (GPTQ) × c=1/4/8/16 | A | TODO |
+| 3 | vLLM INT4 (AWQ) × c=1/4/8/16 | A | TODO |
+| 4 | SageMaker (A10G): INT4, c=1 and c=8, auto-scaling, tokens/dollar | B | TODO |
+| 5 | Vertex AI (L4): INT4, c=1 and c=8, auto-scaling, tokens/dollar | B | TODO |
 
 ## Results to Date
 
@@ -141,7 +148,8 @@ C:\shanshou\CS6180-FinalProject\
 3. Run FP16 × c=1/4/8/16 (ShareGPT, 100 requests each)
 4. Restart vLLM with INT8 model, run c=1/4/8/16
 5. Restart vLLM with INT4 model, run c=1/4/8/16
-6. Member B: SageMaker INT4 deployment and benchmark
+6. Member B: SageMaker INT4 deployment — c=1 and c=8, auto-scaling, record tokens/dollar
+7. Member B: Vertex AI INT4 deployment — same workload, same metrics for direct comparison
 
 ## Team
 

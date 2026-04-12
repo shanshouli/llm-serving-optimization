@@ -23,7 +23,7 @@ services:
     image: vllm/vllm-openai:latest
     container_name: vllm-server
     ports:
-      - "8000:8000"
+      - "18000:8000"
     volumes:
       # Bind-mount the host HuggingFace cache so models are shared with standalone docker run
       # This reuses models already downloaded to C:\Users\zla77\.cache\huggingface
