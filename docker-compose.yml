@@ -62,7 +62,7 @@ services:
       dockerfile: serving/Dockerfile
     container_name: hf-baseline
     ports:
-      - "8001:8001"
+      - "18001:8001"
     volumes:
       # Reuse the same HuggingFace model cache as the standalone docker run
       - ${USERPROFILE}/.cache/huggingface:/root/.cache/huggingface
