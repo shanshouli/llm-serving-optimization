@@ -1,0 +1,250 @@
+[11:53:34] Deploy INT8 (no OPTION_QUANTIZE — vLLM auto-detects compressed-tensors)
+sagemaker.config INFO - Not applying SDK defaults from location: /Library/Application Support/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /Users/molly/Library/Application Support/sagemaker/config.yaml
+Container URI: 763104351884.dkr.ecr.us-west-2.amazonaws.com/djl-inference:0.30.0-lmi12.0.0-cu124
+Deploying ml.g5.xlarge endpoint: vllm-llama3-int8 ...
+-------------!Endpoint ready. Cold-start time: 423.7s
+Endpoint name: vllm-llama3-int8
+Region: us-west-2
+[12:00:40] INT8 benchmark c=1
+Benchmarking SageMaker endpoint: vllm-llama3-int8
+Concurrency=1, Requests=100, max_len=1024, quant=int8gptq
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Warm-up done.
+  [1/100] latency=1.33s tokens=44
+  [2/100] latency=2.01s tokens=166
+  [3/100] latency=5.98s tokens=308
+  [4/100] latency=1.64s tokens=119
+  [5/100] latency=3.79s tokens=231
+  [6/100] latency=3.48s tokens=106
+  [7/100] latency=2.16s tokens=172
+  [8/100] latency=1.32s tokens=115
+  [9/100] latency=0.40s tokens=31
+  [10/100] latency=4.55s tokens=321
+  [11/100] latency=4.99s tokens=356
+  [12/100] latency=6.04s tokens=517
+  [13/100] latency=0.40s tokens=27
+  [14/100] latency=1.82s tokens=126
+  [15/100] latency=1.30s tokens=107
+  [16/100] latency=1.80s tokens=130
+  [17/100] latency=1.46s tokens=52
+  [18/100] latency=4.79s tokens=377
+  [19/100] latency=4.61s tokens=375
+  [20/100] latency=2.25s tokens=106
+  [21/100] latency=0.82s tokens=35
+  [22/100] latency=3.35s tokens=191
+  [23/100] latency=4.29s tokens=340
+  [24/100] latency=4.75s tokens=396
+  [25/100] latency=3.81s tokens=257
+  [26/100] latency=3.97s tokens=360
+  [27/100] latency=2.15s tokens=191
+  [28/100] latency=0.82s tokens=14
+  [29/100] latency=1.54s tokens=92
+  [30/100] latency=3.12s tokens=176
+  [31/100] latency=1.08s tokens=93
+  [32/100] latency=6.14s tokens=352
+  [33/100] latency=6.04s tokens=412
+  [34/100] latency=2.63s tokens=217
+  [35/100] latency=1.46s tokens=81
+  [36/100] latency=5.20s tokens=445
+  [37/100] latency=1.76s tokens=114
+  [38/100] latency=0.41s tokens=24
+  [39/100] latency=1.54s tokens=130
+  [40/100] latency=4.10s tokens=336
+  [41/100] latency=2.15s tokens=124
+  [42/100] latency=1.84s tokens=128
+  [43/100] latency=1.62s tokens=139
+  [44/100] latency=1.97s tokens=104
+  [45/100] latency=3.99s tokens=236
+  [46/100] latency=4.50s tokens=406
+  [47/100] latency=3.46s tokens=252
+  [48/100] latency=2.07s tokens=143
+  [49/100] latency=3.90s tokens=300
+  [50/100] latency=6.01s tokens=332
+  [51/100] latency=6.06s tokens=527
+  [52/100] latency=1.84s tokens=139
+  [53/100] latency=1.54s tokens=118
+  [54/100] latency=0.92s tokens=78
+  [55/100] latency=1.43s tokens=111
+  [56/100] latency=2.15s tokens=163
+  [57/100] latency=2.10s tokens=183
+  [58/100] latency=3.74s tokens=258
+  [59/100] latency=1.46s tokens=122
+  [60/100] latency=3.25s tokens=271
+  [61/100] latency=3.89s tokens=305
+  [62/100] latency=0.41s tokens=20
+  [63/100] latency=2.94s tokens=215
+  [64/100] latency=4.03s tokens=244
+  [65/100] latency=3.69s tokens=274
+  [66/100] latency=2.25s tokens=198
+  [67/100] latency=2.15s tokens=159
+  [68/100] latency=4.16s tokens=269
+  [69/100] latency=3.11s tokens=282
+  [70/100] latency=6.01s tokens=525
+  [71/100] latency=1.43s tokens=102
+  [72/100] latency=3.41s tokens=297
+  [73/100] latency=4.40s tokens=276
+  [74/100] latency=4.30s tokens=237
+  [75/100] latency=1.54s tokens=100
+  [76/100] latency=3.58s tokens=258
+  [77/100] latency=2.38s tokens=208
+  [78/100] latency=3.77s tokens=317
+  [79/100] latency=1.14s tokens=71
+  [80/100] latency=4.49s tokens=312
+  [81/100] latency=5.38s tokens=352
+  [82/100] latency=1.20s tokens=96
+  [83/100] latency=3.46s tokens=300
+  [84/100] latency=3.18s tokens=283
+  [85/100] latency=3.89s tokens=331
+  [86/100] latency=0.61s tokens=29
+  [87/100] latency=6.04s tokens=547
+  [88/100] latency=4.77s tokens=253
+  [89/100] latency=0.96s tokens=72
+  [90/100] latency=3.01s tokens=197
+  [91/100] latency=2.83s tokens=191
+  [92/100] latency=2.90s tokens=254
+  [93/100] latency=0.38s tokens=20
+  [94/100] latency=5.53s tokens=283
+  [95/100] latency=2.05s tokens=198
+  [96/100] latency=1.31s tokens=107
+  [97/100] latency=3.70s tokens=300
+  [98/100] latency=6.02s tokens=344
+  [99/100] latency=4.84s tokens=448
+  [100/100] latency=5.32s tokens=353
+
+==================================================
+Results: 100 requests, concurrency=1
+==================================================
+Avg latency:       3.015s
+P50 latency:       3.006s
+P95 latency:       6.040s
+P99 latency:       6.145s
+Avg tokens/s:      71.2
+Aggregate tokens/s:72.3
+Requests/s:        0.33
+Wall time:         301.6s
+Saved: /Users/molly/CS6180/final_project/llm-serving-optimization/results/raw/sagemaker_int8gptq_c1_n100.csv
+[12:05:44] INT8 benchmark c=8
+Benchmarking SageMaker endpoint: vllm-llama3-int8
+Concurrency=8, Requests=100, max_len=1024, quant=int8gptq
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Warm-up done.
+  [1/100] latency=1.60s tokens=44
+  [2/100] latency=1.63s tokens=115
+  [3/100] latency=2.25s tokens=166
+  [4/100] latency=1.00s tokens=31
+  [5/100] latency=2.60s tokens=172
+  [6/100] latency=4.29s tokens=106
+  [7/100] latency=4.53s tokens=231
+  [8/100] latency=5.12s tokens=322
+  [9/100] latency=4.15s tokens=27
+  [10/100] latency=2.46s tokens=126
+  [11/100] latency=2.22s tokens=107
+  [12/100] latency=6.77s tokens=119
+  [13/100] latency=6.77s tokens=314
+  [14/100] latency=5.53s tokens=334
+  [15/100] latency=1.74s tokens=52
+  [16/100] latency=2.65s tokens=106
+  [17/100] latency=6.82s tokens=479
+  [18/100] latency=2.66s tokens=130
+  [19/100] latency=2.65s tokens=45
+  [20/100] latency=3.79s tokens=191
+  [21/100] latency=5.14s tokens=375
+  [22/100] latency=5.35s tokens=353
+  [23/100] latency=3.89s tokens=191
+  [24/100] latency=4.81s tokens=340
+  [25/100] latency=2.15s tokens=14
+  [26/100] latency=1.82s tokens=92
+  [27/100] latency=4.30s tokens=297
+  [28/100] latency=4.43s tokens=362
+  [29/100] latency=1.46s tokens=93
+  [30/100] latency=5.36s tokens=361
+  [31/100] latency=3.56s tokens=176
+  [32/100] latency=2.86s tokens=217
+  [33/100] latency=2.86s tokens=81
+  [34/100] latency=4.78s tokens=114
+  [35/100] latency=4.78s tokens=24
+  [36/100] latency=3.89s tokens=130
+  [37/100] latency=2.97s tokens=171
+  [38/100] latency=5.70s tokens=449
+  [39/100] latency=6.76s tokens=416
+  [40/100] latency=6.85s tokens=413
+  [41/100] latency=4.71s tokens=336
+  [42/100] latency=2.35s tokens=139
+  [43/100] latency=2.35s tokens=104
+  [44/100] latency=2.35s tokens=128
+  [45/100] latency=3.89s tokens=249
+  [46/100] latency=3.39s tokens=145
+  [47/100] latency=2.29s tokens=139
+  [48/100] latency=4.64s tokens=236
+  [49/100] latency=5.68s tokens=442
+  [50/100] latency=1.65s tokens=118
+  [51/100] latency=1.65s tokens=78
+  [52/100] latency=4.31s tokens=302
+  [53/100] latency=2.41s tokens=111
+  [54/100] latency=2.42s tokens=163
+  [55/100] latency=2.51s tokens=183
+  [56/100] latency=6.24s tokens=491
+  [57/100] latency=6.86s tokens=332
+  [58/100] latency=3.17s tokens=120
+  [59/100] latency=3.78s tokens=265
+  [60/100] latency=2.77s tokens=20
+  [61/100] latency=4.39s tokens=258
+  [62/100] latency=4.51s tokens=315
+  [63/100] latency=3.38s tokens=215
+  [64/100] latency=2.55s tokens=187
+  [65/100] latency=3.37s tokens=159
+  [66/100] latency=4.60s tokens=241
+  [67/100] latency=1.84s tokens=102
+  [68/100] latency=4.19s tokens=274
+  [69/100] latency=3.48s tokens=282
+  [70/100] latency=4.68s tokens=267
+  [71/100] latency=3.71s tokens=297
+  [72/100] latency=4.61s tokens=260
+  [73/100] latency=4.40s tokens=100
+  [74/100] latency=3.89s tokens=208
+  [75/100] latency=4.41s tokens=265
+  [76/100] latency=4.81s tokens=293
+  [77/100] latency=2.53s tokens=71
+  [78/100] latency=6.65s tokens=523
+  [79/100] latency=4.22s tokens=315
+  [80/100] latency=3.79s tokens=96
+  [81/100] latency=3.59s tokens=283
+  [82/100] latency=3.79s tokens=296
+  [83/100] latency=3.99s tokens=29
+  [84/100] latency=4.21s tokens=331
+  [85/100] latency=5.01s tokens=312
+  [86/100] latency=5.94s tokens=351
+  [87/100] latency=3.33s tokens=72
+  [88/100] latency=3.33s tokens=197
+  [89/100] latency=6.26s tokens=517
+  [90/100] latency=2.56s tokens=20
+  [91/100] latency=3.18s tokens=191
+  [92/100] latency=3.25s tokens=254
+  [93/100] latency=5.32s tokens=253
+  [94/100] latency=1.99s tokens=107
+  [95/100] latency=2.24s tokens=198
+  [96/100] latency=4.08s tokens=300
+  [97/100] latency=5.94s tokens=287
+  [98/100] latency=5.22s tokens=439
+  [99/100] latency=5.65s tokens=353
+  [100/100] latency=6.45s tokens=344
+
+==================================================
+Results: 100 requests, concurrency=8
+==================================================
+Avg latency:       3.897s
+P50 latency:       3.891s
+P95 latency:       6.771s
+P99 latency:       6.864s
+Avg tokens/s:      54.6
+Aggregate tokens/s:425.0
+Requests/s:        1.95
+Wall time:         51.4s
+Saved: /Users/molly/CS6180/final_project/llm-serving-optimization/results/raw/sagemaker_int8gptq_c8_n100.csv
+[12:06:38] Delete INT8 endpoint + config
+[12:06:39] Deleted: vllm-llama3-int8
+[12:06:39] Deleted config: vllm-llama3-int8
+[12:06:39] Push INT8 results to GitHub
