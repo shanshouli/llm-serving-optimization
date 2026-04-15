@@ -201,3 +201,78 @@ plt.close()
 print("Saved: quant_speedup_by_hardware.png")
 
 print("\nAll figures saved to results/figures/")
+
+
+# ── Figure 5: Cost per 1M tokens ──────────────────────────────────────────
+def plot_cost_analysis():
+    import csv
+
+    PRICE_PER_HR = 1.212  # ml.g5.xlarge us-west-2
+
+    def load(path):
+        rows = []
+        with open(path) as f:
+            for r in csv.DictReader(f):
+                rows.append({"latency": float(r["latency"]), "tokens": int(r["tokens"])})
+        return rows
+
+    files = {
+        ("FP16", 1): "results/raw/sagemaker_fp16_c1_n100.csv",
+        ("FP16", 8): "results/raw/sagemaker_fp16_c8_n100.csv",
+        ("INT8", 1): "results/raw/sagemaker_int8gptq_c1_n100.csv",
+        ("INT8", 8): "results/raw/sagemaker_int8gptq_c8_n100.csv",
+        ("INT4", 1): "results/raw/sagemaker_int4awq_c1_n100.csv",
+        ("INT4", 8): "results/raw/sagemaker_int4awq_c8_n100.csv",
+    }
+
+    data = {}
+    for (model, c), path in files.items():
+        rows = load(path)
+        total_tokens = sum(r["tokens"] for r in rows)
+        wall_time = sum(r["latency"] for r in rows) / c
+        agg_tps = total_tokens / wall_time
+        data[(model, c)] = (PRICE_PER_HR / 3600) * (1_000_000 / agg_tps)
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig.suptitle("SageMaker (A10G) — Cost Efficiency", fontsize=13, fontweight="bold")
+
+    MODELS = ["FP16", "INT8", "INT4"]
+    COLORS = {"FP16": "#4C72B0", "INT8": "#55A868", "INT4": "#C44E52"}
+    x = np.arange(2)
+    width = 0.25
+
+    # Left: cost per 1M tokens
+    ax = axes[0]
+    for i, m in enumerate(MODELS):
+        vals = [data[(m, 1)], data[(m, 8)]]
+        bars = ax.bar(x + i * width, vals, width, label=m, color=COLORS[m])
+        for bar, v in zip(bars, vals):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
+                    f"${v:.2f}", ha="center", va="bottom", fontsize=8)
+    ax.set_xticks(x + width)
+    ax.set_xticklabels(["Concurrency = 1", "Concurrency = 8"])
+    ax.set_ylabel("Cost per 1M Tokens (USD)")
+    ax.set_title("Cost per 1M Tokens (lower = better)")
+    ax.legend()
+
+    # Right: cost savings vs FP16 at c=8
+    ax = axes[1]
+    baseline = data[("FP16", 8)]
+    savings = {m: (baseline - data[(m, 8)]) / baseline * 100 for m in MODELS}
+    colors = [COLORS[m] for m in MODELS]
+    bars = ax.bar(MODELS, [savings[m] for m in MODELS], color=colors)
+    for bar, m in zip(bars, MODELS):
+        v = savings[m]
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5,
+                f"{v:.0f}%", ha="center", va="bottom", fontsize=10, fontweight="bold")
+    ax.axhline(0, color="gray", linewidth=0.8)
+    ax.set_ylabel("Cost Savings vs FP16 c=8 (%)")
+    ax.set_title("Cost Savings Relative to FP16 at c=8")
+    ax.set_ylim(-10, 60)
+
+    plt.tight_layout()
+    plt.savefig("results/figures/cost_analysis.png", dpi=150, bbox_inches="tight")
+    plt.close()
+    print("Saved: cost_analysis.png")
+
+plot_cost_analysis()

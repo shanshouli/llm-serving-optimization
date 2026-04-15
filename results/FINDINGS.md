@@ -79,6 +79,31 @@ Tracks key findings from each experiment run. Updated as new results come in.
 
 ---
 
+---
+
+## 2026-04-15 — SageMaker Cost Analysis
+
+Instance: ml.g5.xlarge (A10G), $1.212/hr (us-west-2 on-demand)
+Metric: **Cost per 1M tokens** = (1,000,000 / aggregate_tok/s) × ($/hr ÷ 3600)
+
+### Figure 5 — `cost_analysis.png`
+**Cost per 1M Tokens by Model and Concurrency**
+
+| Model | c=1 ($/1M tok) | c=8 ($/1M tok) | Savings vs FP16 c=8 |
+|-------|---------------|---------------|---------------------|
+| FP16  | $6.76 | $1.16 | baseline |
+| INT8  | $4.66 | $0.75 | **35% cheaper** |
+| INT4  | $3.25 | $0.56 | **51% cheaper** |
+
+**Key findings:**
+- Concurrency has a larger impact on cost than quantization: FP16 c=8 ($1.16) is cheaper than INT4 c=1 ($3.25).
+- **INT4 at c=8 is the most cost-efficient configuration at $0.56/1M tokens** — 2.1× cheaper than FP16 at c=8.
+- INT8 at c=8 ($0.75) offers a good middle ground: 35% cheaper than FP16 with lower deployment risk than INT4.
+- Always run at high concurrency in production — the cost difference between c=1 and c=8 is 6× for FP16.
+- These numbers are for SageMaker only; Vertex AI (L4, ~$0.98/hr) comparison pending.
+
+---
+
 ## 2026-04-14 — Local Experiments Complete (Member A)
 
 - vLLM FP16, INT8 (GPTQ), INT4 (AWQ) × c=1/4/8/16 on RTX 2080 completed.
