@@ -13,3 +13,6 @@ wheels/
 
 # Large generated data files (run benchmark/prepare_sharegpt.py to regenerate)
 benchmark/workloads/sharegpt_filtered.json
+
+# Runner script contains HF token — never commit
+cloud/run_all_benchmarks.sh

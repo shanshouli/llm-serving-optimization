@@ -1,0 +1,932 @@
+[
+  {
+    "elapsed": 0.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 0.0,
+    "Invocations_cw": 0.0
+  },
+  {
+    "elapsed": 31.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 0.0,
+    "Invocations_cw": 0.0
+  },
+  {
+    "elapsed": 62.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 145.0,
+    "Invocations_cw": 145.0
+  },
+  {
+    "elapsed": 92.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 189.0,
+    "Invocations_cw": 193.0
+  },
+  {
+    "elapsed": 123.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 91.0,
+    "Invocations_cw": 93.0
+  },
+  {
+    "elapsed": 154.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 124.0,
+    "Invocations_cw": 124.0
+  },
+  {
+    "elapsed": 184.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 102.0,
+    "Invocations_cw": 102.0
+  },
+  {
+    "elapsed": 215.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 112.0,
+    "Invocations_cw": 112.0
+  },
+  {
+    "elapsed": 246.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 70.0,
+    "Invocations_cw": 70.0
+  },
+  {
+    "elapsed": 276.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 78.0,
+    "Invocations_cw": 78.0
+  },
+  {
+    "elapsed": 307.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 69.0,
+    "Invocations_cw": 68.0
+  },
+  {
+    "elapsed": 338.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 78.0,
+    "Invocations_cw": 78.0
+  },
+  {
+    "elapsed": 369.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 71.0,
+    "Invocations_cw": 71.0
+  },
+  {
+    "elapsed": 399.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 430.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 69.0,
+    "Invocations_cw": 69.0
+  },
+  {
+    "elapsed": 461.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 491.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 66.0,
+    "Invocations_cw": 66.0
+  },
+  {
+    "elapsed": 522.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 76.0,
+    "Invocations_cw": 76.0
+  },
+  {
+    "elapsed": 553.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 191.0,
+    "Invocations_cw": 191.0
+  },
+  {
+    "elapsed": 584.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 238.0,
+    "Invocations_cw": 240.0
+  },
+  {
+    "elapsed": 615.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 116.0,
+    "Invocations_cw": 116.0
+  },
+  {
+    "elapsed": 645.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 167.0,
+    "Invocations_cw": 167.0
+  },
+  {
+    "elapsed": 676.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 72.0,
+    "Invocations_cw": 72.0
+  },
+  {
+    "elapsed": 707.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 106.0,
+    "Invocations_cw": 106.0
+  },
+  {
+    "elapsed": 737.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 94.0,
+    "Invocations_cw": 94.0
+  },
+  {
+    "elapsed": 768.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 99.0,
+    "Invocations_cw": 99.0
+  },
+  {
+    "elapsed": 798.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 829.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 860.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 71.0,
+    "Invocations_cw": 71.0
+  },
+  {
+    "elapsed": 891.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 76.0,
+    "Invocations_cw": 76.0
+  },
+  {
+    "elapsed": 921.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 67.0,
+    "Invocations_cw": 67.0
+  },
+  {
+    "elapsed": 952.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 58.0,
+    "Invocations_cw": 56.0
+  },
+  {
+    "elapsed": 983.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 71.0,
+    "Invocations_cw": 71.0
+  },
+  {
+    "elapsed": 1013.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 52.0,
+    "Invocations_cw": 52.0
+  },
+  {
+    "elapsed": 1044.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 64.0,
+    "Invocations_cw": 64.0
+  },
+  {
+    "elapsed": 1075.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 53.0,
+    "Invocations_cw": 53.0
+  },
+  {
+    "elapsed": 1106.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 68.0,
+    "Invocations_cw": 68.0
+  },
+  {
+    "elapsed": 1137.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 142.0,
+    "Invocations_cw": 142.0
+  },
+  {
+    "elapsed": 1167.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 170.0,
+    "Invocations_cw": 171.0
+  },
+  {
+    "elapsed": 1198.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 98.0,
+    "Invocations_cw": 98.0
+  },
+  {
+    "elapsed": 1229.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 139.0,
+    "Invocations_cw": 140.0
+  },
+  {
+    "elapsed": 1260.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 206.0,
+    "Invocations_cw": 206.0
+  },
+  {
+    "elapsed": 1291.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 252.0,
+    "Invocations_cw": 252.0
+  },
+  {
+    "elapsed": 1321.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 99.0,
+    "Invocations_cw": 100.0
+  },
+  {
+    "elapsed": 1352.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 133.0,
+    "Invocations_cw": 134.0
+  },
+  {
+    "elapsed": 1383.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 1414.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 108.0,
+    "Invocations_cw": 108.0
+  },
+  {
+    "elapsed": 1444.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 71.0,
+    "Invocations_cw": 71.0
+  },
+  {
+    "elapsed": 1475.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 96.0,
+    "Invocations_cw": 94.0
+  },
+  {
+    "elapsed": 1506.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 157.0,
+    "Invocations_cw": 157.0
+  },
+  {
+    "elapsed": 1537.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 183.0,
+    "Invocations_cw": 183.0
+  },
+  {
+    "elapsed": 1567.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 174.0,
+    "Invocations_cw": 172.0
+  },
+  {
+    "elapsed": 1598.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 190.0,
+    "Invocations_cw": 190.0
+  },
+  {
+    "elapsed": 1629.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 139.0,
+    "Invocations_cw": 139.0
+  },
+  {
+    "elapsed": 1660.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 156.0,
+    "Invocations_cw": 156.0
+  },
+  {
+    "elapsed": 1690.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 67.0,
+    "Invocations_cw": 67.0
+  },
+  {
+    "elapsed": 1721.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 1752.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 68.0,
+    "Invocations_cw": 70.0
+  },
+  {
+    "elapsed": 1783.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 79.0,
+    "Invocations_cw": 79.0
+  },
+  {
+    "elapsed": 1813.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 69.0,
+    "Invocations_cw": 69.0
+  },
+  {
+    "elapsed": 1844.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 72.0,
+    "Invocations_cw": 72.0
+  },
+  {
+    "elapsed": 1875.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 64.0,
+    "Invocations_cw": 64.0
+  },
+  {
+    "elapsed": 1905.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 70.0,
+    "Invocations_cw": 70.0
+  },
+  {
+    "elapsed": 1936.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 56.0,
+    "Invocations_cw": 56.0
+  },
+  {
+    "elapsed": 1967.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 76.0,
+    "Invocations_cw": 76.0
+  },
+  {
+    "elapsed": 1998.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 98.0,
+    "Invocations_cw": 98.0
+  },
+  {
+    "elapsed": 2029.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 116.0,
+    "Invocations_cw": 116.0
+  },
+  {
+    "elapsed": 2059.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 139.0,
+    "Invocations_cw": 139.0
+  },
+  {
+    "elapsed": 2090.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 139.0,
+    "Invocations_cw": 139.0
+  },
+  {
+    "elapsed": 2121.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 124.0,
+    "Invocations_cw": 124.0
+  },
+  {
+    "elapsed": 2152.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 106.0,
+    "Invocations_cw": 106.0
+  },
+  {
+    "elapsed": 2182.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 147.0,
+    "Invocations_cw": 147.0
+  },
+  {
+    "elapsed": 2213.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 55.0,
+    "Invocations_cw": 53.0
+  },
+  {
+    "elapsed": 2244.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 2275.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 57.0,
+    "Invocations_cw": 57.0
+  },
+  {
+    "elapsed": 2306.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 2336.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 53.0,
+    "Invocations_cw": 53.0
+  },
+  {
+    "elapsed": 2367.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 78.0,
+    "Invocations_cw": 79.0
+  },
+  {
+    "elapsed": 2398.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 61.0,
+    "Invocations_cw": 59.0
+  },
+  {
+    "elapsed": 2429.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 2459.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 57.0,
+    "Invocations_cw": 57.0
+  },
+  {
+    "elapsed": 2490.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 75.0,
+    "Invocations_cw": 75.0
+  },
+  {
+    "elapsed": 2521.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 54.0,
+    "Invocations_cw": 54.0
+  },
+  {
+    "elapsed": 2552.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 65.0,
+    "Invocations_cw": 65.0
+  },
+  {
+    "elapsed": 2582.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 57.0,
+    "Invocations_cw": 57.0
+  },
+  {
+    "elapsed": 2613.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 67.0,
+    "Invocations_cw": 67.0
+  },
+  {
+    "elapsed": 2644.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 104.0,
+    "Invocations_cw": 105.0
+  },
+  {
+    "elapsed": 2675.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 128.0,
+    "Invocations_cw": 128.0
+  },
+  {
+    "elapsed": 2706.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 133.0,
+    "Invocations_cw": 133.0
+  },
+  {
+    "elapsed": 2736.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 157.0,
+    "Invocations_cw": 156.0
+  },
+  {
+    "elapsed": 2767.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 67.0,
+    "Invocations_cw": 67.0
+  },
+  {
+    "elapsed": 2798.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 78.0,
+    "Invocations_cw": 78.0
+  },
+  {
+    "elapsed": 2829.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 66.0,
+    "Invocations_cw": 66.0
+  },
+  {
+    "elapsed": 2860.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 2890.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 100.0,
+    "Invocations_cw": 100.0
+  },
+  {
+    "elapsed": 2921.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 123.0,
+    "Invocations_cw": 124.0
+  },
+  {
+    "elapsed": 2952.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 116.0,
+    "Invocations_cw": 114.0
+  },
+  {
+    "elapsed": 2983.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 117.0,
+    "Invocations_cw": 117.0
+  },
+  {
+    "elapsed": 3013.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 187.0,
+    "Invocations_cw": 187.0
+  },
+  {
+    "elapsed": 3044.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 193.0,
+    "Invocations_cw": 193.0
+  },
+  {
+    "elapsed": 3075.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 189.0,
+    "Invocations_cw": 189.0
+  },
+  {
+    "elapsed": 3106.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 192.0,
+    "Invocations_cw": 192.0
+  },
+  {
+    "elapsed": 3136.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 3167.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 3198.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 86.0,
+    "Invocations_cw": 86.0
+  },
+  {
+    "elapsed": 3228.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 98.0,
+    "Invocations_cw": 98.0
+  },
+  {
+    "elapsed": 3259.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 114.0,
+    "Invocations_cw": 114.0
+  },
+  {
+    "elapsed": 3290.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 163.0,
+    "Invocations_cw": 163.0
+  },
+  {
+    "elapsed": 3321.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 162.0,
+    "Invocations_cw": 162.0
+  },
+  {
+    "elapsed": 3351.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 51.0,
+    "Invocations_cw": 53.0
+  },
+  {
+    "elapsed": 3382.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 110.0,
+    "Invocations_cw": 110.0
+  },
+  {
+    "elapsed": 3413.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 30.0,
+    "Invocations_cw": 31.0
+  },
+  {
+    "elapsed": 3443.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 65.0,
+    "Invocations_cw": 65.0
+  },
+  {
+    "elapsed": 3474.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 26.0,
+    "Invocations_cw": 26.0
+  },
+  {
+    "elapsed": 3505.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 59.0,
+    "Invocations_cw": 59.0
+  },
+  {
+    "elapsed": 3535.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 33.0,
+    "Invocations_cw": 33.0
+  },
+  {
+    "elapsed": 3566.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 60.0,
+    "Invocations_cw": 60.0
+  },
+  {
+    "elapsed": 3597.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 54.0,
+    "Invocations_cw": 54.0
+  },
+  {
+    "elapsed": 3628.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 120.0,
+    "Invocations_cw": 120.0
+  },
+  {
+    "elapsed": 3658.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 101.0,
+    "Invocations_cw": 99.0
+  },
+  {
+    "elapsed": 3689.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 137.0,
+    "Invocations_cw": 137.0
+  },
+  {
+    "elapsed": 3720.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 89.0,
+    "Invocations_cw": 89.0
+  },
+  {
+    "elapsed": 3750.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 127.0,
+    "Invocations_cw": 127.0
+  },
+  {
+    "elapsed": 3781.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 111.0,
+    "Invocations_cw": 111.0
+  },
+  {
+    "elapsed": 3812.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 160.0,
+    "Invocations_cw": 160.0
+  },
+  {
+    "elapsed": 3842.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 55.0,
+    "Invocations_cw": 54.0
+  },
+  {
+    "elapsed": 3873.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 3904.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 63.0,
+    "Invocations_cw": 63.0
+  },
+  {
+    "elapsed": 3934.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 3965.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 63.0,
+    "Invocations_cw": 63.0
+  },
+  {
+    "elapsed": 3996.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 4026.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 62.0,
+    "Invocations_cw": 60.0
+  },
+  {
+    "elapsed": 4057.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 76.0,
+    "Invocations_cw": 76.0
+  },
+  {
+    "elapsed": 4088.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 56.0,
+    "Invocations_cw": 56.0
+  },
+  {
+    "elapsed": 4118.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 4149.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 54.0,
+    "Invocations_cw": 54.0
+  },
+  {
+    "elapsed": 4180.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 80.0,
+    "Invocations_cw": 80.0
+  },
+  {
+    "elapsed": 4210.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 92.0,
+    "Invocations_cw": 92.0
+  },
+  {
+    "elapsed": 4241.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 108.0,
+    "Invocations_cw": 108.0
+  },
+  {
+    "elapsed": 4272.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 142.0,
+    "Invocations_cw": 142.0
+  },
+  {
+    "elapsed": 4302.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 163.0,
+    "Invocations_cw": 163.0
+  },
+  {
+    "elapsed": 4333.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 122.0,
+    "Invocations_cw": 122.0
+  },
+  {
+    "elapsed": 4364.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 143.0,
+    "Invocations_cw": 143.0
+  },
+  {
+    "elapsed": 4395.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 71.0,
+    "Invocations_cw": 71.0
+  },
+  {
+    "elapsed": 4425.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 73.0,
+    "Invocations_cw": 73.0
+  },
+  {
+    "elapsed": 4456.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 4487.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 77.0,
+    "Invocations_cw": 77.0
+  },
+  {
+    "elapsed": 4517.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 107.0,
+    "Invocations_cw": 107.0
+  },
+  {
+    "elapsed": 4548.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 110.0,
+    "Invocations_cw": 110.0
+  },
+  {
+    "elapsed": 4579.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 87.0,
+    "Invocations_cw": 87.0
+  },
+  {
+    "elapsed": 4609.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 87.0,
+    "Invocations_cw": 87.0
+  },
+  {
+    "elapsed": 4640.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 2.0,
+    "Invocations_cw": 2.0
+  },
+  {
+    "elapsed": 4671.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 2.0,
+    "Invocations_cw": 2.0
+  },
+  {
+    "elapsed": 4701.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 2.0,
+    "Invocations_cw": 2.0
+  },
+  {
+    "elapsed": 4732.0,
+    "instances": 1,
+    "InvocationsPerInstance_cw": 1.0,
+    "Invocations_cw": 1.0
+  }
+]

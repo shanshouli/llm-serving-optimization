@@ -1,0 +1,350 @@
+[23:38:32] ===== Starting full benchmark run =====
+[23:38:32] Step 1: Delete INT4 endpoint (already benchmarked)
+[23:38:32] Deleting endpoint: vllm-llama3-int4 ...
+[23:38:33] Deleted: vllm-llama3-int4
+[23:38:43] Step 2: Deploy FP16 endpoint
+sagemaker.config INFO - Not applying SDK defaults from location: /Library/Application Support/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /Users/molly/Library/Application Support/sagemaker/config.yaml
+Container URI: 763104351884.dkr.ecr.us-west-2.amazonaws.com/djl-inference:0.30.0-lmi12.0.0-cu124
+Deploying ml.g5.xlarge endpoint: vllm-llama3-fp16 ...
+-------------!Endpoint ready. Cold-start time: 423.5s
+Endpoint name: vllm-llama3-fp16
+Region: us-west-2
+[23:45:48] Step 3: FP16 benchmark c=1
+Benchmarking SageMaker endpoint: vllm-llama3-fp16
+Concurrency=1, Requests=100, max_len=1024, quant=fp16
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Warm-up done.
+  [1/100] latency=1.81s tokens=42
+  [2/100] latency=7.76s tokens=2
+  [3/100] latency=8.30s tokens=274
+  [4/100] latency=4.05s tokens=239
+  [5/100] latency=5.31s tokens=231
+  [6/100] latency=4.91s tokens=133
+  [7/100] latency=3.04s tokens=162
+  [8/100] latency=1.83s tokens=107
+  [9/100] latency=0.53s tokens=29
+  [10/100] latency=6.46s tokens=345
+  [11/100] latency=6.84s tokens=371
+  [12/100] latency=8.53s tokens=482
+  [13/100] latency=0.53s tokens=27
+  [14/100] latency=2.54s tokens=91
+  [15/100] latency=1.81s tokens=118
+  [16/100] latency=2.47s tokens=123
+  [17/100] latency=2.04s tokens=58
+  [18/100] latency=6.68s tokens=317
+  [19/100] latency=6.44s tokens=396
+  [20/100] latency=3.07s tokens=106
+  [21/100] latency=1.09s tokens=33
+  [22/100] latency=4.81s tokens=202
+  [23/100] latency=6.04s tokens=365
+  [24/100] latency=6.76s tokens=310
+  [25/100] latency=5.43s tokens=257
+  [26/100] latency=5.63s tokens=338
+  [27/100] latency=3.02s tokens=184
+  [28/100] latency=1.06s tokens=14
+  [29/100] latency=2.18s tokens=88
+  [30/100] latency=4.49s tokens=192
+  [31/100] latency=1.53s tokens=89
+  [32/100] latency=8.60s tokens=323
+  [33/100] latency=8.60s tokens=427
+  [34/100] latency=3.68s tokens=206
+  [35/100] latency=2.05s tokens=83
+  [36/100] latency=7.37s tokens=468
+  [37/100] latency=2.46s tokens=130
+  [38/100] latency=0.53s tokens=26
+  [39/100] latency=2.24s tokens=118
+  [40/100] latency=5.83s tokens=338
+  [41/100] latency=2.97s tokens=65
+  [42/100] latency=2.56s tokens=132
+  [43/100] latency=2.36s tokens=144
+  [44/100] latency=5.93s tokens=245
+  [45/100] latency=7.17s tokens=399
+  [46/100] latency=4.92s tokens=243
+  [47/100] latency=2.92s tokens=143
+  [48/100] latency=5.56s tokens=300
+  [49/100] latency=2.06s tokens=122
+  [50/100] latency=8.60s tokens=538
+  [51/100] latency=2.51s tokens=136
+  [52/100] latency=2.03s tokens=119
+  [53/100] latency=1.18s tokens=75
+  [54/100] latency=2.03s tokens=110
+  [55/100] latency=2.89s tokens=166
+  [56/100] latency=2.98s tokens=182
+  [57/100] latency=5.22s tokens=244
+  [58/100] latency=2.46s tokens=136
+  [59/100] latency=4.54s tokens=279
+  [60/100] latency=5.41s tokens=318
+  [61/100] latency=0.40s tokens=23
+  [62/100] latency=4.12s tokens=222
+  [63/100] latency=5.80s tokens=321
+  [64/100] latency=5.17s tokens=201
+  [65/100] latency=1.90s tokens=97
+  [66/100] latency=3.07s tokens=119
+  [67/100] latency=5.91s tokens=263
+  [68/100] latency=4.43s tokens=286
+  [69/100] latency=8.56s tokens=538
+  [70/100] latency=2.01s tokens=127
+  [71/100] latency=4.76s tokens=274
+  [72/100] latency=6.21s tokens=231
+  [73/100] latency=5.97s tokens=270
+  [74/100] latency=2.17s tokens=120
+  [75/100] latency=4.93s tokens=234
+  [76/100] latency=3.37s tokens=167
+  [77/100] latency=5.41s tokens=318
+  [78/100] latency=1.28s tokens=71
+  [79/100] latency=6.11s tokens=286
+  [80/100] latency=7.68s tokens=314
+  [81/100] latency=1.68s tokens=96
+  [82/100] latency=4.88s tokens=292
+  [83/100] latency=4.51s tokens=282
+  [84/100] latency=5.52s tokens=330
+  [85/100] latency=0.65s tokens=29
+  [86/100] latency=8.56s tokens=560
+  [87/100] latency=6.76s tokens=237
+  [88/100] latency=1.34s tokens=74
+  [89/100] latency=4.28s tokens=197
+  [90/100] latency=3.93s tokens=191
+  [91/100] latency=4.17s tokens=250
+  [92/100] latency=0.46s tokens=15
+  [93/100] latency=7.79s tokens=314
+  [94/100] latency=2.85s tokens=201
+  [95/100] latency=2.22s tokens=135
+  [96/100] latency=5.32s tokens=287
+  [97/100] latency=8.61s tokens=257
+  [98/100] latency=7.16s tokens=452
+  [99/100] latency=7.58s tokens=400
+WARNING: 1/100 requests failed and were excluded.
+
+==================================================
+Results: 99 requests, concurrency=1
+==================================================
+Avg latency:       4.264s
+P50 latency:       4.282s
+P95 latency:       8.557s
+P99 latency:       8.608s
+Avg tokens/s:      50.0
+Aggregate tokens/s:28.7
+Requests/s:        0.14
+Wall time:         731.2s
+Saved: /Users/molly/CS6180/final_project/llm-serving-optimization/results/raw/sagemaker_fp16_c1_n100.csv
+[23:58:03] Step 4: FP16 benchmark c=8
+Benchmarking SageMaker endpoint: vllm-llama3-fp16
+Concurrency=8, Requests=100, max_len=1024, quant=fp16
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Warm-up done.
+  [1/100] latency=6.12s tokens=107
+  [2/100] latency=6.13s tokens=133
+  [3/100] latency=6.13s tokens=169
+  [4/100] latency=6.13s tokens=240
+  [5/100] latency=6.14s tokens=42
+  [6/100] latency=6.13s tokens=123
+  [7/100] latency=8.69s tokens=2
+  [8/100] latency=9.51s tokens=349
+  [9/100] latency=7.16s tokens=27
+  [10/100] latency=7.16s tokens=91
+  [11/100] latency=4.61s tokens=118
+  [12/100] latency=7.16s tokens=361
+  [13/100] latency=7.17s tokens=28
+  [14/100] latency=3.79s tokens=123
+  [15/100] latency=7.64s tokens=380
+  [16/100] latency=2.45s tokens=46
+  [17/100] latency=9.62s tokens=474
+  [18/100] latency=5.42s tokens=110
+  [19/100] latency=5.42s tokens=202
+  [20/100] latency=5.42s tokens=50
+  [21/100] latency=6.85s tokens=365
+  [22/100] latency=7.47s tokens=380
+  [23/100] latency=7.75s tokens=341
+  [24/100] latency=6.24s tokens=300
+  [25/100] latency=3.58s tokens=14
+  [26/100] latency=3.58s tokens=175
+  [27/100] latency=2.60s tokens=88
+  [28/100] latency=2.49s tokens=89
+  [29/100] latency=7.78s tokens=352
+  [30/100] latency=6.45s tokens=332
+  [31/100] latency=5.06s tokens=223
+  [32/100] latency=3.28s tokens=83
+  [33/100] latency=4.20s tokens=206
+  [34/100] latency=2.97s tokens=128
+  [35/100] latency=9.62s tokens=323
+  [36/100] latency=6.45s tokens=26
+  [37/100] latency=5.79s tokens=118
+  [38/100] latency=5.32s tokens=117
+  [39/100] latency=5.32s tokens=132
+  [40/100] latency=8.30s tokens=458
+  [41/100] latency=9.70s tokens=431
+  [42/100] latency=6.55s tokens=335
+  [43/100] latency=2.62s tokens=143
+  [44/100] latency=6.35s tokens=245
+  [45/100] latency=6.14s tokens=143
+  [46/100] latency=6.14s tokens=254
+  [47/100] latency=6.13s tokens=302
+  [48/100] latency=7.88s tokens=399
+  [49/100] latency=9.42s tokens=284
+  [50/100] latency=4.34s tokens=105
+  [51/100] latency=4.50s tokens=75
+  [52/100] latency=4.51s tokens=136
+  [53/100] latency=4.50s tokens=119
+  [54/100] latency=3.23s tokens=166
+  [55/100] latency=9.51s tokens=534
+  [56/100] latency=5.79s tokens=136
+  [57/100] latency=5.79s tokens=182
+  [58/100] latency=5.32s tokens=23
+  [59/100] latency=5.79s tokens=245
+  [60/100] latency=4.52s tokens=187
+  [61/100] latency=5.80s tokens=265
+  [62/100] latency=6.20s tokens=318
+  [63/100] latency=2.14s tokens=97
+  [64/100] latency=3.54s tokens=152
+  [65/100] latency=5.02s tokens=286
+  [66/100] latency=6.49s tokens=214
+  [67/100] latency=6.49s tokens=322
+  [68/100] latency=6.72s tokens=332
+  [69/100] latency=4.58s tokens=127
+  [70/100] latency=5.26s tokens=261
+  [71/100] latency=9.50s tokens=516
+  [72/100] latency=6.84s tokens=214
+  [73/100] latency=5.14s tokens=189
+  [74/100] latency=5.38s tokens=115
+  [75/100] latency=5.47s tokens=226
+  [76/100] latency=6.64s tokens=273
+  [77/100] latency=3.23s tokens=71
+  [78/100] latency=1.90s tokens=84
+  [79/100] latency=5.93s tokens=319
+  [80/100] latency=5.76s tokens=282
+  [81/100] latency=7.03s tokens=331
+  [82/100] latency=6.70s tokens=292
+  [83/100] latency=6.08s tokens=347
+  [84/100] latency=5.44s tokens=29
+  [85/100] latency=8.52s tokens=356
+  [86/100] latency=4.73s tokens=193
+  [87/100] latency=5.26s tokens=74
+  [88/100] latency=4.94s tokens=252
+  [89/100] latency=3.77s tokens=20
+  [90/100] latency=9.43s tokens=559
+  [91/100] latency=4.95s tokens=187
+  [92/100] latency=7.55s tokens=348
+  [93/100] latency=3.18s tokens=201
+  [94/100] latency=8.00s tokens=444
+  [95/100] latency=8.54s tokens=304
+  [96/100] latency=8.01s tokens=132
+  [97/100] latency=8.01s tokens=279
+  [98/100] latency=9.33s tokens=278
+  [99/100] latency=8.09s tokens=400
+WARNING: 1/100 requests failed and were excluded.
+
+==================================================
+Results: 99 requests, concurrency=8
+==================================================
+Avg latency:       5.994s
+P50 latency:       6.124s
+P95 latency:       9.506s
+P99 latency:       9.699s
+Avg tokens/s:      35.7
+Aggregate tokens/s:63.7
+Requests/s:        0.29
+Wall time:         338.2s
+Saved: /Users/molly/CS6180/final_project/llm-serving-optimization/results/raw/sagemaker_fp16_c8_n100.csv
+[00:03:44] Step 5: Delete FP16 endpoint
+[00:03:44] Deleting endpoint: vllm-llama3-fp16 ...
+[00:03:45] Deleted: vllm-llama3-fp16
+[00:03:55] Step 6: Deploy INT8 (GPTQ) endpoint
+sagemaker.config INFO - Not applying SDK defaults from location: /Library/Application Support/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /Users/molly/Library/Application Support/sagemaker/config.yaml
+Container URI: 763104351884.dkr.ecr.us-west-2.amazonaws.com/djl-inference:0.30.0-lmi12.0.0-cu124
+Deploying ml.g5.xlarge endpoint: vllm-llama3-int8 ...
+--------------------------------------------------------*Please check the troubleshooting guide for common errors: https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-python-sdk-troubleshooting.html#sagemaker-python-sdk-troubleshooting-create-endpoint
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_d │
+│ eploy.py:91 in <module>                                                      │
+│                                                                              │
+│   88 │   if not hf_token:                                                    │
+│   89 │   │   raise SystemExit("Error: provide --hf-token or set HF_TOKEN env │
+│   90 │                                                                       │
+│ ❱ 91 │   deploy(hf_token, args.quantize)                                     │
+│   92                                                                         │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_d │
+│ eploy.py:65 in deploy                                                        │
+│                                                                              │
+│   62 │   print(f"Deploying {INSTANCE_TYPE} endpoint: {endpoint_name} ...")   │
+│   63 │   cold_start_begin = time.time()                                      │
+│   64 │                                                                       │
+│ ❱ 65 │   model.deploy(                                                       │
+│   66 │   │   initial_instance_count=1,                                       │
+│   67 │   │   instance_type=INSTANCE_TYPE,                                    │
+│   68 │   │   endpoint_name=endpoint_name,                                    │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/model.py:1825 in deploy                          │
+│                                                                              │
+│   1822 │   │   │   │   )                                                     │
+│   1823 │   │   │   │   self.sagemaker_session.update_endpoint(self.endpoint_ │
+│   1824 │   │   │   else:                                                     │
+│ ❱ 1825 │   │   │   │   self.sagemaker_session.endpoint_from_production_varia │
+│   1826 │   │   │   │   │   name=self.endpoint_name,                          │
+│   1827 │   │   │   │   │   production_variants=[production_variant],         │
+│   1828 │   │   │   │   │   tags=tags,                                        │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/session.py:6254 in                               │
+│ endpoint_from_production_variants                                            │
+│                                                                              │
+│   6251 │   │   logger.info("Creating endpoint-config with name %s", name)    │
+│   6252 │   │   self.sagemaker_client.create_endpoint_config(**config_options │
+│   6253 │   │                                                                 │
+│ ❱ 6254 │   │   return self.create_endpoint(                                  │
+│   6255 │   │   │   endpoint_name=name,                                       │
+│   6256 │   │   │   config_name=name,                                         │
+│   6257 │   │   │   tags=endpoint_tags,                                       │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/session.py:5099 in create_endpoint               │
+│                                                                              │
+│   5096 │   │   │   logger.error(                                             │
+│   5097 │   │   │   │   "Please check the troubleshooting guide for common er │
+│   5098 │   │   │   )                                                         │
+│ ❱ 5099 │   │   │   raise e                                                   │
+│   5100 │                                                                     │
+│   5101 │   def endpoint_in_service_or_not(self, endpoint_name: str):         │
+│   5102 │   │   """Check whether an Amazon SageMaker ``Endpoint``` is in IN_S │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/session.py:5088 in create_endpoint               │
+│                                                                              │
+│   5085 │   │   │   │   self.endpoint_arn = res["EndpointArn"]                │
+│   5086 │   │   │                                                             │
+│   5087 │   │   │   if wait:                                                  │
+│ ❱ 5088 │   │   │   │   self.wait_for_endpoint(endpoint_name, live_logging=li │
+│   5089 │   │   │   return endpoint_name                                      │
+│   5090 │   │   except Exception as e:                                        │
+│   5091 │   │   │   troubleshooting = (                                       │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/session.py:5897 in wait_for_endpoint             │
+│                                                                              │
+│   5894 │   │   │   │   │   allowed_statuses=["InService"],                   │
+│   5895 │   │   │   │   │   actual_status=status,                             │
+│   5896 │   │   │   │   )                                                     │
+│ ❱ 5897 │   │   │   raise exceptions.UnexpectedStatusException(               │
+│   5898 │   │   │   │   message=message,                                      │
+│   5899 │   │   │   │   allowed_statuses=["InService"],                       │
+│   5900 │   │   │   │   actual_status=status,                                 │
+╰──────────────────────────────────────────────────────────────────────────────╯
+UnexpectedStatusException: Error hosting endpoint vllm-llama3-int8: Failed. 
+Reason: The primary container for production variant AllTraffic did not pass the
+ping health check. Please check CloudWatch logs for this endpoint.. Try changing
+the instance type or reference the troubleshooting page 
+https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-troubleshooting.
+html
+[00:32:37] ERROR encountered — deleting all endpoints to avoid extra fees.
+[00:32:37] Deleting endpoint: vllm-llama3-int4 ...
+[00:32:38] Endpoint vllm-llama3-int4 not found or already deleted.
+[00:32:38] Deleting endpoint: vllm-llama3-fp16 ...
+[00:32:38] Endpoint vllm-llama3-fp16 not found or already deleted.
+[00:32:38] Deleting endpoint: vllm-llama3-int8 ...
+[00:32:40] Deleted: vllm-llama3-int8
+[00:32:40] Cleanup done. Exiting.

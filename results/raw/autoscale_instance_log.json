@@ -1,0 +1,252 @@
+[
+  {
+    "time": 24133.41685625,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24143.722244333,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24153.863171708,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24163.9906185,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24174.140378875,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24184.283403166,
+    "phase": "baseline",
+    "instances": 1
+  },
+  {
+    "time": 24194.414656208,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24204.4253585,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24306.823372833,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24316.830031208,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24415.377755875,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24425.381670166,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24515.446554333,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24525.450761875,
+    "phase": "burst",
+    "instances": 1
+  },
+  {
+    "time": 24628.797873583,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24638.940924791,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24649.106226291,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24659.250206791,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24669.537706375,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24679.696238458,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24689.848227375,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24699.990488708,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24710.123147125,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24720.263186375,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24730.410094583,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24740.5654695,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24750.694720541,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24760.833672833,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24770.97229825,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24781.114184291,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24791.283696541,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24801.419125708,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24811.549580875,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24821.701558375,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24831.848336416,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24841.984549833,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24852.131692125,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24862.273360916,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24872.405449458,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24882.684935458,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24892.812745208,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24902.938713708,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24913.17891625,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24923.318188708,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24933.448097416,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24943.602830208,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24953.788198291,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24963.908529041,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24974.081127041,
+    "phase": "cooldown",
+    "instances": 1
+  },
+  {
+    "time": 24984.215529791,
+    "phase": "cooldown",
+    "instances": 1
+  }
+]

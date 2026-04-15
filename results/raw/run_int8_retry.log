@@ -1,0 +1,163 @@
+[06:18:22] Deploy INT8 (GPTQ, no OPTION_QUANTIZE)
+sagemaker.config INFO - Not applying SDK defaults from location: /Library/Application Support/sagemaker/config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: /Users/molly/Library/Application Support/sagemaker/config.yaml
+Container URI: 763104351884.dkr.ecr.us-west-2.amazonaws.com/djl-inference:0.30.0-lmi12.0.0-cu124
+Deploying ml.g5.xlarge endpoint: vllm-llama3-int8 ...
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_d │
+│ eploy.py:92 in <module>                                                      │
+│                                                                              │
+│   89 │   if not hf_token:                                                    │
+│   90 │   │   raise SystemExit("Error: provide --hf-token or set HF_TOKEN env │
+│   91 │                                                                       │
+│ ❱ 92 │   deploy(hf_token, args.quantize)                                     │
+│   93                                                                         │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_d │
+│ eploy.py:66 in deploy                                                        │
+│                                                                              │
+│   63 │   print(f"Deploying {INSTANCE_TYPE} endpoint: {endpoint_name} ...")   │
+│   64 │   cold_start_begin = time.time()                                      │
+│   65 │                                                                       │
+│ ❱ 66 │   model.deploy(                                                       │
+│   67 │   │   initial_instance_count=1,                                       │
+│   68 │   │   instance_type=INSTANCE_TYPE,                                    │
+│   69 │   │   endpoint_name=endpoint_name,                                    │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/model.py:1825 in deploy                          │
+│                                                                              │
+│   1822 │   │   │   │   )                                                     │
+│   1823 │   │   │   │   self.sagemaker_session.update_endpoint(self.endpoint_ │
+│   1824 │   │   │   else:                                                     │
+│ ❱ 1825 │   │   │   │   self.sagemaker_session.endpoint_from_production_varia │
+│   1826 │   │   │   │   │   name=self.endpoint_name,                          │
+│   1827 │   │   │   │   │   production_variants=[production_variant],         │
+│   1828 │   │   │   │   │   tags=tags,                                        │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/sagemaker/session.py:6252 in                               │
+│ endpoint_from_production_variants                                            │
+│                                                                              │
+│   6249 │   │   │   config_options["ExecutionRoleArn"] = role                 │
+│   6250 │   │                                                                 │
+│   6251 │   │   logger.info("Creating endpoint-config with name %s", name)    │
+│ ❱ 6252 │   │   self.sagemaker_client.create_endpoint_config(**config_options │
+│   6253 │   │                                                                 │
+│   6254 │   │   return self.create_endpoint(                                  │
+│   6255 │   │   │   endpoint_name=name,                                       │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/botocore/client.py:602 in _api_call                        │
+│                                                                              │
+│    599 │   │   │   │   │   f"{py_operation_name}() only accepts keyword argu │
+│    600 │   │   │   │   )                                                     │
+│    601 │   │   │   # The "self" in this scope is referring to the BaseClient │
+│ ❱  602 │   │   │   return self._make_api_call(operation_name, kwargs)        │
+│    603 │   │                                                                 │
+│    604 │   │   _api_call.__name__ = str(py_operation_name)                   │
+│    605                                                                       │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/botocore/context.py:123 in wrapper                         │
+│                                                                              │
+│   120 │   │   │   with start_as_current_context():                           │
+│   121 │   │   │   │   if hook:                                               │
+│   122 │   │   │   │   │   hook()                                             │
+│ ❱ 123 │   │   │   │   return func(*args, **kwargs)                           │
+│   124 │   │                                                                  │
+│   125 │   │   return wrapper                                                 │
+│   126                                                                        │
+│                                                                              │
+│ /Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3 │
+│ .11/site-packages/botocore/client.py:1078 in _make_api_call                  │
+│                                                                              │
+│   1075 │   │   │   │   'error_code_override'                                 │
+│   1076 │   │   │   ) or error_info.get("Code")                               │
+│   1077 │   │   │   error_class = self.exceptions.from_code(error_code)       │
+│ ❱ 1078 │   │   │   raise error_class(parsed_response, operation_name)        │
+│   1079 │   │   else:                                                         │
+│   1080 │   │   │   return parsed_response                                    │
+│   1081                                                                       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ClientError: An error occurred (ValidationException) when calling the 
+CreateEndpointConfig operation: Cannot create already existing endpoint 
+configuration 
+"arn:aws:sagemaker:us-west-2:697196251385:endpoint-config/vllm-llama3-int8".
+[06:18:26] INT8 benchmark c=1
+Benchmarking SageMaker endpoint: vllm-llama3-int8
+Concurrency=1, Requests=100, max_len=1024, quant=int8gptq
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Traceback (most recent call last):
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 195, in <module>
+    asyncio.run(main(args.concurrency, args.requests, args.max_len, args.quant, args.endpoint))
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 179, in main
+    results, wall_time = await run_benchmark(concurrency, n_requests, max_len)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 110, in run_benchmark
+    await loop.run_in_executor(None, invoke_endpoint, client, warmup_sample)
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 79, in invoke_endpoint
+    response = client.invoke_endpoint(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.ValidationError: An error occurred (ValidationError) when calling the InvokeEndpoint operation: Endpoint vllm-llama3-int8 of account 697196251385 not found.
+[06:18:26] INT8 benchmark c=8
+Benchmarking SageMaker endpoint: vllm-llama3-int8
+Concurrency=8, Requests=100, max_len=1024, quant=int8gptq
+Loaded 100 samples (max_len=1024, seed=42)
+Running 2 warm-up requests (excluded from results)...
+Traceback (most recent call last):
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 195, in <module>
+    asyncio.run(main(args.concurrency, args.requests, args.max_len, args.quant, args.endpoint))
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 179, in main
+    results, wall_time = await run_benchmark(concurrency, n_requests, max_len)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 110, in run_benchmark
+    await loop.run_in_executor(None, invoke_endpoint, client, warmup_sample)
+  File "/Users/molly/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/cloud/sagemaker_benchmark.py", line 79, in invoke_endpoint
+    response = client.invoke_endpoint(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/molly/CS6180/final_project/llm-serving-optimization/.venv/lib/python3.11/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.ValidationError: An error occurred (ValidationError) when calling the InvokeEndpoint operation: Endpoint vllm-llama3-int8 of account 697196251385 not found.
+[06:18:27] Delete INT8 endpoint
+[06:18:28] vllm-llama3-int8 not found.
+[06:18:28] Push to GitHub
