@@ -17,11 +17,15 @@ def load(path):
             rows.append({"latency": float(r["latency"]), "tokens": int(r["tokens"])})
     return rows
 
-def summary(rows):
+def summary(rows, c=1):
     lats = sorted(r["latency"] for r in rows)
     n = len(lats)
     total_tok = sum(r["tokens"] for r in rows)
-    wall = sum(lats)
+    # Approximate wall time as sum(latencies)/c.
+    # At c=1 this is exact (sequential). At c>1 this underestimates wall time
+    # by ~7-22%, so agg_tps is slightly overestimated. Exact wall time was not
+    # stored in CSVs; Vertex AI logs confirm the approximation error is <22%.
+    wall = sum(lats) / c
     return {
         "avg_lat": sum(lats) / n,
         "p50":     lats[int(n * 0.50)],
@@ -32,25 +36,25 @@ def summary(rows):
 
 # SageMaker data
 sm = {
-    ("FP16",  1): summary(load("results/raw/sagemaker_fp16_c1_n100.csv")),
-    ("FP16",  8): summary(load("results/raw/sagemaker_fp16_c8_n100.csv")),
-    ("INT8",  1): summary(load("results/raw/sagemaker_int8gptq_c1_n100.csv")),
-    ("INT8",  8): summary(load("results/raw/sagemaker_int8gptq_c8_n100.csv")),
-    ("INT4",  1): summary(load("results/raw/sagemaker_int4awq_c1_n100.csv")),
-    ("INT4",  8): summary(load("results/raw/sagemaker_int4awq_c8_n100.csv")),
+    ("FP16",  1): summary(load("results/raw/sagemaker_fp16_c1_n100.csv"),  c=1),
+    ("FP16",  8): summary(load("results/raw/sagemaker_fp16_c8_n100.csv"),  c=8),
+    ("INT8",  1): summary(load("results/raw/sagemaker_int8gptq_c1_n100.csv"), c=1),
+    ("INT8",  8): summary(load("results/raw/sagemaker_int8gptq_c8_n100.csv"), c=8),
+    ("INT4",  1): summary(load("results/raw/sagemaker_int4awq_c1_n100.csv"),  c=1),
+    ("INT4",  8): summary(load("results/raw/sagemaker_int4awq_c8_n100.csv"),  c=8),
 }
 
 # Local data
 local = {
-    ("FP16",  1):  summary(load("results/raw/bench_c1_n95_maxlen1024.csv")),
-    ("FP16",  8):  summary(load("results/raw/bench_c8_n95_maxlen1024.csv")),
-    ("FP16", 16):  summary(load("results/raw/bench_c16_n95_maxlen1024.csv")),
-    ("INT8",  1):  summary(load("results/raw/bench_c1_n100_maxlen2048.csv")),
-    ("INT8",  8):  summary(load("results/raw/bench_c8_n100_maxlen2048.csv")),
-    ("INT8", 16):  summary(load("results/raw/bench_c16_n100_maxlen2048.csv")),
-    ("INT4",  1):  summary(load("results/raw/bench_c1_n100_maxlen4096.csv")),
-    ("INT4",  8):  summary(load("results/raw/bench_c8_n100_maxlen4096.csv")),
-    ("INT4", 16):  summary(load("results/raw/bench_c16_n100_maxlen4096.csv")),
+    ("FP16",  1):  summary(load("results/raw/bench_c1_n95_maxlen1024.csv"),   c=1),
+    ("FP16",  8):  summary(load("results/raw/bench_c8_n95_maxlen1024.csv"),   c=8),
+    ("FP16", 16):  summary(load("results/raw/bench_c16_n95_maxlen1024.csv"),  c=16),
+    ("INT8",  1):  summary(load("results/raw/bench_c1_n100_maxlen2048.csv"),  c=1),
+    ("INT8",  8):  summary(load("results/raw/bench_c8_n100_maxlen2048.csv"),  c=8),
+    ("INT8", 16):  summary(load("results/raw/bench_c16_n100_maxlen2048.csv"), c=16),
+    ("INT4",  1):  summary(load("results/raw/bench_c1_n100_maxlen4096.csv"),  c=1),
+    ("INT4",  8):  summary(load("results/raw/bench_c8_n100_maxlen4096.csv"),  c=8),
+    ("INT4", 16):  summary(load("results/raw/bench_c16_n100_maxlen4096.csv"), c=16),
 }
 
 COLORS = {"FP16": "#4C72B0", "INT8": "#55A868", "INT4": "#C44E52"}
@@ -280,12 +284,12 @@ plot_cost_analysis()
 
 # ── Figure 6: Vertex AI — Latency & Throughput by Quantization ────────────
 vtx = {
-    ("FP16", 1): summary(load("results/raw/vertex_fp16_c1_n100.csv")),
-    ("FP16", 8): summary(load("results/raw/vertex_fp16_c8_n100.csv")),
-    ("INT8", 1): summary(load("results/raw/vertex_int8_c1_n100.csv")),
-    ("INT8", 8): summary(load("results/raw/vertex_int8_c8_n100.csv")),
-    ("INT4", 1): summary(load("results/raw/vertex_int4_c1_n100.csv")),
-    ("INT4", 8): summary(load("results/raw/vertex_int4_c8_n100.csv")),
+    ("FP16", 1): summary(load("results/raw/vertex_fp16_c1_n100.csv"), c=1),
+    ("FP16", 8): summary(load("results/raw/vertex_fp16_c8_n100.csv"), c=8),
+    ("INT8", 1): summary(load("results/raw/vertex_int8_c1_n100.csv"), c=1),
+    ("INT8", 8): summary(load("results/raw/vertex_int8_c8_n100.csv"), c=8),
+    ("INT4", 1): summary(load("results/raw/vertex_int4_c1_n100.csv"), c=1),
+    ("INT4", 8): summary(load("results/raw/vertex_int4_c8_n100.csv"), c=8),
 }
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))

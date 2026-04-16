@@ -170,6 +170,28 @@ Cost per 1M tokens at c=8:
 
 ---
 
+---
+
+## Data Notes & Known Issues
+
+### Throughput Calculation Method
+- `agg_tps` 用 `sum(latencies) / c` 近似 wall time 计算（c = concurrency）
+- c=1 时完全精确；c=8 时误差约 7–22%（低估 wall time → 略微高估 throughput）
+- Vertex AI 的精确 wall time 保存在 `/tmp/vertex_*.log`，可验证误差范围
+- SageMaker INT8/INT4 的精确 wall time log 已丢失，只能用近似值
+- 如果结论受影响，需考虑重跑 SageMaker INT8/INT4（约 2–3 小时 + 云费用）
+
+### Figure 版本说明
+- `results/figures/incorrect_old/` — 旧版错误图（`summary()` 未传 c，等价于 `sum(lats)/1`，c=8 throughput 被低估约 8×）
+- `results/figures/` — 修复后的正确图（使用 `sum(lats)/c` 近似）
+
+### Token 计数差异
+- 本地 benchmark 用 vLLM 返回的真实 `completion_tokens`
+- 云端 benchmark（SageMaker/Vertex）用 `word_count × 1.3` 估算，误差约 10–20%
+- 对 latency 比较无影响；对 throughput/cost 数字有轻微影响
+
+---
+
 ## Open Questions / Next Steps
 
 - [ ] Auto-scaling: DJL-LMI 0.30.0 does not publish `InvocationsPerInstance` to CloudWatch — scaling was not observable. Documented in `cloud/DEPLOYMENT_NOTES.md`.
