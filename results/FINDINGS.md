@@ -144,29 +144,29 @@ Metric: **Cost per 1M tokens** = (1,000,000 / aggregate_tok/s) × ($/hr ÷ 3600)
 ### Figure 7 — `sagemaker_vs_vertex.png`
 **SageMaker (A10G, $1.212/hr) vs Vertex AI (L4, $0.98/hr) — Cross-Platform**
 
-Throughput at c=8:
+Throughput at c=8 (approximate, wall≈sum(lats)/c):
 
-| Model | SageMaker A10G | Vertex AI L4 | L4 vs A10G |
+| Model | SageMaker A10G | Vertex AI L4 | A10G vs L4 |
 |-------|---------------|-------------|------------|
-| FP16  | 63.7 tok/s | 177.8 tok/s | **+179%** |
-| INT8  | 425.0 tok/s | 304.8 tok/s | -28% |
-| INT4  | 566.2 tok/s | 477.5 tok/s | -16% |
+| FP16  | 291 tok/s | 217 tok/s | **+34%** |
+| INT8  | 448 tok/s | 327 tok/s | **+37%** |
+| INT4  | 596 tok/s | 511 tok/s | **+17%** |
 
 Cost per 1M tokens at c=8:
 
 | Model | SageMaker A10G | Vertex AI L4 | Cheaper platform |
 |-------|---------------|-------------|-----------------|
-| FP16  | $1.16 | $0.42 | **Vertex AI (64% cheaper)** |
-| INT8  | $0.75 | $0.49 | **Vertex AI (35% cheaper)** |
-| INT4  | $0.56 | $0.39 | **Vertex AI (30% cheaper)** |
+| FP16  | $1.16 | $1.26 | **SageMaker (8% cheaper)** |
+| INT8  | $0.75 | $0.83 | **SageMaker (10% cheaper)** |
+| INT4  | $0.57 | $0.53 | **Vertex AI (6% cheaper)** |
 
 **Key findings:**
-- **Vertex AI L4 is cheaper than SageMaker A10G across all quantization levels** due to its lower hourly rate ($0.98 vs $1.212/hr).
-- For FP16, the L4 dramatically outperforms the A10G in throughput (178 vs 64 tok/s) — likely because the L4 has better FP16 memory bandwidth for this model size.
-- For INT4/INT8, the A10G leads in raw throughput (566 vs 478 tok/s for INT4) — the A10G's higher INT4 TOPS outweigh the L4's lower price.
-- **Best price-performance: Vertex AI L4 with INT4 at $0.39/1M tokens** — 66% cheaper than SageMaker FP16 c=8.
-- **If raw throughput is the priority:** SageMaker A10G INT4 at 566 tok/s wins, but costs 44% more per token than Vertex AI INT4.
-- The non-obvious result: L4 is better for FP16 workloads; A10G is better for quantized workloads in absolute throughput terms.
+- **SageMaker A10G leads in throughput across all quantization levels** (17–37% higher than L4), due to A10G's superior INT4/INT8 tensor core throughput.
+- **For FP16 and INT8, SageMaker is also cheaper per token** despite the higher hourly rate — higher throughput more than compensates.
+- **For INT4 only, Vertex AI is marginally cheaper** ($0.53 vs $0.57, ~6% difference) — the L4's lower hourly rate barely edges out the A10G's throughput advantage.
+- The cost difference between platforms is small (6–10%) — platform choice should factor in operational considerations (ecosystem, tooling, existing GCP/AWS investment) beyond raw cost.
+- **Best absolute throughput: SageMaker A10G INT4 at 596 tok/s**
+- **Best cost efficiency: Vertex AI L4 INT4 at $0.53/1M tokens** (marginally)
 
 ---
 
