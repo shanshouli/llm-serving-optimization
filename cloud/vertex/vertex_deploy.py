@@ -27,11 +27,10 @@ MACHINE_TYPE  = "g2-standard-4"       # 1x L4 GPU, 4 vCPU, 16 GB RAM, ~$0.98/hr
 ACCELERATOR   = "NVIDIA_L4"
 ACCEL_COUNT   = 1
 
-# Vertex AI Model Garden vLLM serving container (stable release)
-VLLM_IMAGE = (
-    "us-docker.pkg.dev/vertex-ai/vertex-vision-model-garden-dockers/"
-    "pytorch-vllm-serve:20241211_0916_RC00"
-)
+# Official vLLM OpenAI-compatible server image.
+# Using the official vLLM image directly avoids Model Garden wrapper issues
+# where the launch command was built incorrectly from env vars.
+VLLM_IMAGE = "us-central1-docker.pkg.dev/llm-serving-optimization/vllm-repo/vllm-openai:v0.6.6.post1"
 
 # Model IDs match local and SageMaker experiments exactly
 MODEL_IDS = {
@@ -64,16 +63,20 @@ def deploy(project: str, hf_token: str, quantize: str = "int4") -> str:
     print(f"Container:    {VLLM_IMAGE}")
     print()
 
-    # Environment variables passed to the vLLM container
+    # vLLM OpenAI server is launched via container command args.
+    # Vertex AI passes AIP_HTTP_PORT automatically; we bind vLLM to it.
+    container_args = [
+        "--model",                  hf_model_id,
+        "--port",                   "8080",          # Vertex AI default AIP_HTTP_PORT
+        "--max-model-len",          MAX_MODEL_LEN[quantize],
+        "--gpu-memory-utilization", "0.90",
+        "--dtype",                  "auto",
+        "--disable-log-requests",
+    ]
+
     env_vars = {
-        "MODEL_ID":                   hf_model_id,
-        "HUGGING_FACE_HUB_TOKEN":     hf_token,
-        "DEPLOY_SOURCE":              "notebook",
-        "VLLM_ARGS": (
-            f"--max-model-len {MAX_MODEL_LEN[quantize]} "
-            f"--gpu-memory-utilization 0.90 "
-            f"--dtype auto"
-        ),
+        "HUGGING_FACE_HUB_TOKEN": hf_token,
+        "HF_TOKEN":               hf_token,
     }
 
     # Upload model resource (points to HuggingFace, no actual artifact upload)
@@ -81,10 +84,11 @@ def deploy(project: str, hf_token: str, quantize: str = "int4") -> str:
     model = aiplatform.Model.upload(
         display_name=endpoint_name,
         serving_container_image_uri=VLLM_IMAGE,
+        serving_container_args=container_args,
         serving_container_environment_variables=env_vars,
-        serving_container_predict_route="/generate",
-        serving_container_health_route="/ping",
-        serving_container_ports=[7080],
+        serving_container_predict_route="/v1/completions",
+        serving_container_health_route="/health",
+        serving_container_ports=[8080],
     )
     print(f"Model registered: {model.resource_name}")
 

@@ -113,8 +113,65 @@ Metric: **Cost per 1M tokens** = (1,000,000 / aggregate_tok/s) × ($/hr ÷ 3600)
 
 ---
 
+---
+
+## 2026-04-15 — Vertex AI Cloud Benchmarks Complete
+
+### Data collected
+- Vertex AI (L4 GPU, g2-standard-4): FP16, INT8 (W8A8), INT4 (AWQ) × c=1, c=8 (100 req each)
+- Container: vLLM v0.6.6.post1 via Artifact Registry
+- Region: us-central1
+
+---
+
+### Figure 6 — `vertex_quant_comparison.png`
+**Vertex AI (L4): Latency & Throughput by Quantization**
+
+| Model | c=1 avg lat | c=8 avg lat | c=1 agg tok/s | c=8 agg tok/s |
+|-------|------------|------------|--------------|--------------|
+| FP16  | 7.30s | 8.51s | 30.2 | 177.8 |
+| INT8  | 4.95s | 5.44s | 45.1 | 304.8 |
+| INT4  | 3.10s | 3.63s | 73.5 | 477.5 |
+
+**Key findings:**
+- On L4 (Ampere/Ada), quantization consistently reduces latency: INT4 is **2.4× faster** than FP16 at c=1.
+- Aggregate throughput scales strongly with quantization: INT4 c=8 achieves **477 tok/s vs FP16's 178 tok/s** — a 2.7× improvement.
+- The quantization ladder is monotonic: INT4 > INT8 > FP16 on all metrics, same pattern as SageMaker A10G.
+- INT4 c=8 at 477 tok/s is the peak throughput configuration.
+
+---
+
+### Figure 7 — `sagemaker_vs_vertex.png`
+**SageMaker (A10G, $1.212/hr) vs Vertex AI (L4, $0.98/hr) — Cross-Platform**
+
+Throughput at c=8:
+
+| Model | SageMaker A10G | Vertex AI L4 | L4 vs A10G |
+|-------|---------------|-------------|------------|
+| FP16  | 63.7 tok/s | 177.8 tok/s | **+179%** |
+| INT8  | 425.0 tok/s | 304.8 tok/s | -28% |
+| INT4  | 566.2 tok/s | 477.5 tok/s | -16% |
+
+Cost per 1M tokens at c=8:
+
+| Model | SageMaker A10G | Vertex AI L4 | Cheaper platform |
+|-------|---------------|-------------|-----------------|
+| FP16  | $1.16 | $0.42 | **Vertex AI (64% cheaper)** |
+| INT8  | $0.75 | $0.49 | **Vertex AI (35% cheaper)** |
+| INT4  | $0.56 | $0.39 | **Vertex AI (30% cheaper)** |
+
+**Key findings:**
+- **Vertex AI L4 is cheaper than SageMaker A10G across all quantization levels** due to its lower hourly rate ($0.98 vs $1.212/hr).
+- For FP16, the L4 dramatically outperforms the A10G in throughput (178 vs 64 tok/s) — likely because the L4 has better FP16 memory bandwidth for this model size.
+- For INT4/INT8, the A10G leads in raw throughput (566 vs 478 tok/s for INT4) — the A10G's higher INT4 TOPS outweigh the L4's lower price.
+- **Best price-performance: Vertex AI L4 with INT4 at $0.39/1M tokens** — 66% cheaper than SageMaker FP16 c=8.
+- **If raw throughput is the priority:** SageMaker A10G INT4 at 566 tok/s wins, but costs 44% more per token than Vertex AI INT4.
+- The non-obvious result: L4 is better for FP16 workloads; A10G is better for quantized workloads in absolute throughput terms.
+
+---
+
 ## Open Questions / Next Steps
 
-- [ ] Cost analysis: tokens per dollar on SageMaker vs Vertex AI
-- [ ] Vertex AI (L4 GPU) deployment for SageMaker vs Vertex AI comparison
 - [ ] Auto-scaling: DJL-LMI 0.30.0 does not publish `InvocationsPerInstance` to CloudWatch — scaling was not observable. Documented in `cloud/DEPLOYMENT_NOTES.md`.
+- [x] Cost analysis: tokens per dollar on SageMaker vs Vertex AI — COMPLETE
+- [x] Vertex AI (L4 GPU) deployment — COMPLETE

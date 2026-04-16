@@ -276,3 +276,102 @@ def plot_cost_analysis():
     print("Saved: cost_analysis.png")
 
 plot_cost_analysis()
+
+
+# ── Figure 6: Vertex AI — Latency & Throughput by Quantization ────────────
+vtx = {
+    ("FP16", 1): summary(load("results/raw/vertex_fp16_c1_n100.csv")),
+    ("FP16", 8): summary(load("results/raw/vertex_fp16_c8_n100.csv")),
+    ("INT8", 1): summary(load("results/raw/vertex_int8_c1_n100.csv")),
+    ("INT8", 8): summary(load("results/raw/vertex_int8_c8_n100.csv")),
+    ("INT4", 1): summary(load("results/raw/vertex_int4_c1_n100.csv")),
+    ("INT4", 8): summary(load("results/raw/vertex_int4_c8_n100.csv")),
+}
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+fig.suptitle("Vertex AI (L4 GPU) — Latency & Throughput by Quantization", fontsize=13, fontweight="bold")
+
+x = np.arange(2)
+width = 0.25
+
+ax = axes[0]
+for i, m in enumerate(MODELS):
+    vals = [vtx[(m, 1)]["avg_lat"], vtx[(m, 8)]["avg_lat"]]
+    bars = ax.bar(x + i * width, vals, width, label=m, color=COLORS[m])
+    for bar, v in zip(bars, vals):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
+                f"{v:.2f}s", ha="center", va="bottom", fontsize=8)
+ax.set_xticks(x + width)
+ax.set_xticklabels(["Concurrency = 1", "Concurrency = 8"])
+ax.set_ylabel("Avg Latency (s)")
+ax.set_title("Avg Latency (lower = better)")
+ax.legend()
+ax.set_ylim(0, 12)
+
+ax = axes[1]
+for i, m in enumerate(MODELS):
+    vals = [vtx[(m, 1)]["agg_tps"], vtx[(m, 8)]["agg_tps"]]
+    bars = ax.bar(x + i * width, vals, width, label=m, color=COLORS[m])
+    for bar, v in zip(bars, vals):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
+                f"{v:.0f}", ha="center", va="bottom", fontsize=8)
+ax.set_xticks(x + width)
+ax.set_xticklabels(["Concurrency = 1", "Concurrency = 8"])
+ax.set_ylabel("Aggregate Tokens/s")
+ax.set_title("Aggregate Throughput (higher = better)")
+ax.legend()
+
+plt.tight_layout()
+plt.savefig("results/figures/vertex_quant_comparison.png", dpi=150, bbox_inches="tight")
+plt.close()
+print("Saved: vertex_quant_comparison.png")
+
+
+# ── Figure 7: SageMaker vs Vertex AI — Cross-Platform Comparison ──────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+fig.suptitle("SageMaker (A10G, $1.212/hr) vs Vertex AI (L4, $0.98/hr)\nCross-Platform Performance & Cost", fontsize=12, fontweight="bold")
+
+SM_PRICE  = 1.212   # ml.g5.xlarge $/hr
+VTX_PRICE = 0.98    # g2-standard-4 $/hr
+
+def cost_per_1m(agg_tps, price_per_hr):
+    return (price_per_hr / 3600) * (1_000_000 / agg_tps)
+
+# Left: aggregate throughput at c=8
+ax = axes[0]
+platforms = ["SageMaker\nA10G", "Vertex AI\nL4"]
+x = np.arange(len(platforms))
+width = 0.25
+for i, m in enumerate(MODELS):
+    vals = [sm[(m, 8)]["agg_tps"], vtx[(m, 8)]["agg_tps"]]
+    bars = ax.bar(x + i * width, vals, width, label=m, color=COLORS[m])
+    for bar, v in zip(bars, vals):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
+                f"{v:.0f}", ha="center", va="bottom", fontsize=8)
+ax.set_xticks(x + width)
+ax.set_xticklabels(platforms)
+ax.set_ylabel("Aggregate Tokens/s")
+ax.set_title("Throughput at c=8 (higher = better)")
+ax.legend()
+
+# Right: cost per 1M tokens at c=8
+ax = axes[1]
+for i, m in enumerate(MODELS):
+    vals = [
+        cost_per_1m(sm[(m, 8)]["agg_tps"],  SM_PRICE),
+        cost_per_1m(vtx[(m, 8)]["agg_tps"], VTX_PRICE),
+    ]
+    bars = ax.bar(x + i * width, vals, width, label=m, color=COLORS[m])
+    for bar, v in zip(bars, vals):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.002,
+                f"${v:.3f}", ha="center", va="bottom", fontsize=7)
+ax.set_xticks(x + width)
+ax.set_xticklabels(platforms)
+ax.set_ylabel("Cost per 1M Tokens (USD)")
+ax.set_title("Cost Efficiency at c=8 (lower = better)")
+ax.legend()
+
+plt.tight_layout()
+plt.savefig("results/figures/sagemaker_vs_vertex.png", dpi=150, bbox_inches="tight")
+plt.close()
+print("Saved: sagemaker_vs_vertex.png")

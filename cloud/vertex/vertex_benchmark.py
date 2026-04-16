@@ -34,6 +34,13 @@ SHAREGPT_PATH = "benchmark/workloads/sharegpt_filtered.json"
 # Fallback prompt if ShareGPT not available
 FALLBACK_PROMPT = "Explain the difference between machine learning and deep learning in 3 sentences."
 
+# vLLM requires model field matching the loaded model name
+MODEL_IDS = {
+    "fp16": "meta-llama/Llama-3.2-3B-Instruct",
+    "int8": "neuralmagic/Llama-3.2-3B-Instruct-quantized.w8a8",
+    "int4": "casperhansen/llama-3.2-3b-instruct-awq",
+}
+
 
 def get_auth_token() -> str:
     """Get a Google auth token for Vertex AI API calls."""
@@ -44,11 +51,12 @@ def get_auth_token() -> str:
 
 
 def get_endpoint_url(project: str, endpoint_id: str) -> str:
-    """Build the Vertex AI endpoint prediction URL."""
+    """Build the Vertex AI endpoint raw prediction URL.
+    Uses :rawPredict to pass request directly to vLLM /v1/completions."""
     return (
         f"https://{REGION}-aiplatform.googleapis.com/v1/"
         f"projects/{project}/locations/{REGION}/"
-        f"endpoints/{endpoint_id}:predict"
+        f"endpoints/{endpoint_id}:rawPredict"
     )
 
 
@@ -87,16 +95,18 @@ async def invoke_endpoint(
     url: str,
     token: str,
     sample: dict,
+    model_id: str = "meta-llama/Llama-3.2-3B-Instruct",
 ) -> dict:
     """Send one request to Vertex AI endpoint and return latency + token count."""
     max_new_tokens = min(sample["output_tokens"], 512)
 
-    # Vertex AI vLLM container expects OpenAI-style payload wrapped in 'instances'
+    # Official vLLM OpenAI server: /v1/completions endpoint
+    # model field is required by vLLM and must match the loaded model name
     payload = {
-        "instances": [{
-            "prompt":     sample["prompt"],
-            "max_tokens": max_new_tokens,
-        }]
+        "model":      model_id,
+        "prompt":     sample["prompt"],
+        "max_tokens": max_new_tokens,
+        "temperature": 1.0,
     }
     headers = {
         "Authorization": f"Bearer {token}",
@@ -109,9 +119,8 @@ async def invoke_endpoint(
         resp.raise_for_status()
         data = resp.json()
 
-        # Extract generated text from Vertex AI response format
-        # Response: {"predictions": [{"generated_text": "..."}]}
-        generated = data.get("predictions", [{}])[0].get("generated_text", "")
+        # OpenAI /v1/completions response: {"choices": [{"text": "..."}]}
+        generated = data.get("choices", [{}])[0].get("text", "")
         # Estimate token count: word_count * 1.3 (same as sagemaker_benchmark.py)
         token_count = int(len(generated.split()) * 1.3)
 
@@ -126,10 +135,12 @@ async def run_benchmark(
     concurrency: int,
     n_requests: int,
     max_len: int,
+    quant: str = "fp16",
 ) -> tuple[list[dict], float]:
     """Run benchmark with given concurrency. Returns (results, wall_time)."""
-    samples = load_sharegpt_samples(n=n_requests, max_len=max_len)
-    url     = get_endpoint_url(project, endpoint_id)
+    samples  = load_sharegpt_samples(n=n_requests, max_len=max_len)
+    url      = get_endpoint_url(project, endpoint_id)
+    model_id = MODEL_IDS[quant]
 
     # Refresh token (valid for 1 hour; enough for one benchmark run)
     token = get_auth_token()
@@ -139,7 +150,7 @@ async def run_benchmark(
         print("Running 2 warm-up requests (excluded from results)...")
         warmup_sample = {"prompt": FALLBACK_PROMPT, "output_tokens": 64}
         for _ in range(2):
-            await invoke_endpoint(client, url, token, warmup_sample)
+            await invoke_endpoint(client, url, token, warmup_sample, model_id)
         print("Warm-up done.")
 
         # Main benchmark: semaphore limits to 'concurrency' parallel requests
@@ -150,7 +161,7 @@ async def run_benchmark(
         async def bounded_request(i: int, sample: dict):
             nonlocal failed
             async with sem:
-                r = await invoke_endpoint(client, url, token, sample)
+                r = await invoke_endpoint(client, url, token, sample, model_id)
                 if r["success"]:
                     results.append({"latency": r["latency"], "tokens": r["tokens"]})
                     tps = r["tokens"] / r["latency"] if r["latency"] > 0 else 0
@@ -213,7 +224,7 @@ async def main(project: str, endpoint_id: str, concurrency: int,
                n_requests: int, max_len: int, quant: str):
     print(f"Benchmarking Vertex AI endpoint: {endpoint_id}")
     print(f"Project={project}, Concurrency={concurrency}, Requests={n_requests}, quant={quant}")
-    results, wall_time = await run_benchmark(project, endpoint_id, concurrency, n_requests, max_len)
+    results, wall_time = await run_benchmark(project, endpoint_id, concurrency, n_requests, max_len, quant)
     print_summary(results, wall_time, concurrency)
     save_csv(results, concurrency, n_requests, quant)
 
