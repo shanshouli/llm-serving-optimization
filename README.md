@@ -16,13 +16,13 @@ This project answers two independent research questions:
 |---|---|---|
 | 0 | **Baseline** | Hugging Face Transformers + FastAPI, single-request serving, no optimization |
 | 1 | **Serving Framework** | Replace baseline with vLLM; measure improvements from PagedAttention and continuous batching |
-| 2 | **Quantization** | Compare FP16 → INT8 (GPTQ) → INT4 (AWQ); measure speed/memory tradeoff on RTX 2080 |
+| 2 | **Quantization** | Compare FP16 → INT8 (W8A8) → INT4 (AWQ); measure speed/memory tradeoff on RTX 2080 |
 | 3 | **Concurrency** | Simulate concurrent users (c=1/4/8/16); measure throughput scaling and tail latency |
 | 4 | **Cloud Comparison** | Deploy INT4 vLLM to SageMaker (A10G) vs Vertex AI (L4); compare latency, throughput, tokens/dollar, cold-start, auto-scaling |
 
 ## Data Matrix (Local Experiments)
 
-|  | FP16 | INT8 (GPTQ) | INT4 (AWQ) |
+|  | FP16 | INT8 (W8A8) | INT4 (AWQ) |
 |---|---|---|---|
 | **c=1** | ✓ | ✓ | ✓ |
 | **c=4** | ✓ | ✓ | ✓ |
@@ -70,7 +70,7 @@ FP16 (`--max-model-len 1024`): Filtered to input+output ≤ 1024 tokens. INT8/IN
 | Precision | Approx. VRAM | `--max-model-len` | CUDA Graph |
 |---|---|---|---|
 | FP16 | ~6 GB | 1024 | Disabled (`--enforce-eager`) |
-| INT8 (GPTQ) | ~3–4 GB | 2048 | Enabled |
+| INT8 (W8A8) | ~3–4 GB | 2048 | Enabled |
 | INT4 (AWQ) | ~2 GB | 4096 | Enabled |
 
 ## Hardware
