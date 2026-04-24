@@ -175,20 +175,20 @@ Cost per 1M tokens at c=8:
 ## Data Notes & Known Issues
 
 ### Throughput Calculation Method
-- `agg_tps` 用 `sum(latencies) / c` 近似 wall time 计算（c = concurrency）
-- c=1 时完全精确；c=8 时误差约 7–22%（低估 wall time → 略微高估 throughput）
-- Vertex AI 的精确 wall time 保存在 `/tmp/vertex_*.log`，可验证误差范围
-- SageMaker INT8/INT4 的精确 wall time log 已丢失，只能用近似值
-- 如果结论受影响，需考虑重跑 SageMaker INT8/INT4（约 2–3 小时 + 云费用）
+- `agg_tps` is calculated using `sum(latencies) / c` as an approximation of wall time (`c = concurrency`).
+- This is exact at `c=1`; at `c=8`, the error is about 7-22% (underestimating wall time, which slightly overestimates throughput).
+- The exact wall time logs for Vertex AI are stored in `/tmp/vertex_*.log`, which can be used to verify the error range.
+- The exact wall time logs for SageMaker INT8/INT4 were lost, so only the approximate values are available.
+- If this materially affects the conclusions, SageMaker INT8/INT4 should be rerun (about 2-3 hours plus cloud cost).
 
-### Figure 版本说明
-- `results/figures/incorrect_old/` — 旧版错误图（`summary()` 未传 c，等价于 `sum(lats)/1`，c=8 throughput 被低估约 8×）
-- `results/figures/` — 修复后的正确图（使用 `sum(lats)/c` 近似）
+### Figure Version Notes
+- `results/figures/incorrect_old/` — old incorrect figures (`summary()` did not receive `c`, equivalent to `sum(lats)/1`, so `c=8` throughput was underestimated by about 8x).
+- `results/figures/` — corrected figures after the fix (using `sum(lats)/c` as the approximation).
 
-### Token 计数差异
-- 本地 benchmark 用 vLLM 返回的真实 `completion_tokens`
-- 云端 benchmark（SageMaker/Vertex）用 `word_count × 1.3` 估算，误差约 10–20%
-- 对 latency 比较无影响；对 throughput/cost 数字有轻微影响
+### Token Counting Differences
+- Local benchmarks use the actual `completion_tokens` returned by vLLM.
+- Cloud benchmarks (SageMaker/Vertex) use `word_count × 1.3` as an estimate, with roughly 10-20% error.
+- This does not affect latency comparisons, but it has a small effect on throughput and cost figures.
 
 ---
 

@@ -6,9 +6,9 @@ Two-part study: (1) optimize vLLM inference across quantization levels (FP16/INT
 
 This project answers two independent research questions:
 
-**Part 1 — Local optimization (Member A):** How do quantization and concurrency jointly affect LLM serving performance under constrained GPU resources (RTX 2080, 8 GB)? We benchmark vLLM across FP16/INT8/INT4 × c=1/4/8/16 using ShareGPT workloads, with a HuggingFace baseline as reference. Prometheus + Grafana provide real-time KV cache and throughput visibility.
+**Part 1 — Local optimization (Shanshou Li):** How do quantization and concurrency jointly affect LLM serving performance under constrained GPU resources (RTX 2080, 8 GB)? We benchmark vLLM across FP16/INT8/INT4 × c=1/4/8/16 using ShareGPT workloads, with a HuggingFace baseline as reference. Prometheus + Grafana provide real-time KV cache and throughput visibility.
 
-**Part 2 — Cloud platform comparison (Member B):** Given the same INT4 vLLM configuration, which cloud platform delivers better performance per dollar — AWS SageMaker (A10G, ~$1.41/hr) or Google Vertex AI (L4, ~$0.98/hr)? The L4 has ~2× the INT8 throughput of the A10G but costs 30% less, making the outcome non-obvious and practically relevant.
+**Part 2 — Cloud platform comparison (Yumeng Zeng):** Given the same INT4 vLLM configuration, which cloud platform delivers better performance per dollar — AWS SageMaker (A10G, ~$1.41/hr) or Google Vertex AI (L4, ~$0.98/hr)? The L4 has ~2× the INT8 throughput of the A10G but costs 30% less, making the outcome non-obvious and practically relevant.
 
 ## Experiments
 
@@ -78,8 +78,6 @@ FP16 (`--max-model-len 1024`): Filtered to input+output ≤ 1024 tokens. INT8/IN
 | Device | Role |
 |---|---|
 | NVIDIA RTX 2080 (8 GB) | Local experiments — vLLM, quantization, benchmarks |
-| Apple M2 (8 GB) | Benchmark scripting, evaluation pipeline |
-| Apple M1 (8 GB) | Visualization, result analysis, presentation |
 | AWS SageMaker `ml.g5.xlarge` (A10G 24 GB, ~$1.41/hr) | Cloud platform A — latency, throughput, auto-scaling |
 | Google Vertex AI `g2-standard-4` (L4 24 GB, ~$0.98/hr) | Cloud platform B — same metrics for direct comparison |
 
@@ -231,6 +229,6 @@ CS6180-FinalProject/
 
 | Member | Role |
 |---|---|
-| Member A | Local Experiments Lead — all 13 GPU runs, Docker Compose, data analysis, presentation narrative |
-| Member B | Cloud Comparison Lead — SageMaker + Vertex AI deployment, auto-scaling on both platforms, tokens/dollar cost analysis |
-| Member C | Data & Presentation Lead — ShareGPT dataset prep, charts, slide design, rehearsal coordination |
+| Shanshou Li | Local Experiments Lead — all 13 GPU runs, Docker Compose, data analysis, presentation narrative |
+| Yumeng Zeng | Cloud Comparison Lead — SageMaker + Vertex AI deployment, auto-scaling on both platforms, tokens/dollar cost analysis |
+| Han Huang | Data & Presentation Lead — ShareGPT dataset prep, charts, slide design, rehearsal coordination |
